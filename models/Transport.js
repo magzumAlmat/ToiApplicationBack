@@ -43,6 +43,11 @@ const Transport = sequelize.define('Transport', {
         allowNull: false,
         validate: { notEmpty: { msg: 'Укажите марку' } }
     },
+    cost: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        validate: { min: { args: [0], msg: 'Стоимость не может быть отрицательной' } }
+    },
     supplier_id:{
         type: DataTypes.INTEGER,
         allowNull: true

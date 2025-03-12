@@ -8,7 +8,7 @@ const Cakes = sequelize.define('Cakes', {
         autoIncrement: true,
         allowNull: false
     },
-    salonName: {
+    name: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: { notEmpty: { msg: 'Наименование салона обязательно' } }

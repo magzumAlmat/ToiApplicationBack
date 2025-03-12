@@ -8,6 +8,11 @@ const Tamada = sequelize.define('Tamada', {
         autoIncrement: true,
         allowNull: false
     },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: false,
+      },
     portfolio: {
         type: DataTypes.TEXT,
         allowNull: false,

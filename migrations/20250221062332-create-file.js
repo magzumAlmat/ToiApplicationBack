@@ -20,11 +20,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      material_id: {
+      alcohol_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: "materials", // Ссылка на таблицу materials
-          key: "material_id", // Поле material_id в таблице materials
+          model: "Alcohol", // Ссылка на таблицу Alcohol
+          key: "id", // Ссылка на поле id (первичный ключ), а не alcohol_id
         },
         onUpdate: "CASCADE",
         onDelete: "SET NULL",

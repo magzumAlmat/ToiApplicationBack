@@ -9,6 +9,11 @@ module.exports = {
         autoIncrement: true,
         allowNull: false
       },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
       portfolio: {
         type: Sequelize.TEXT,
         allowNull: false

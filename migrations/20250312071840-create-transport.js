@@ -13,6 +13,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      cost: {
+        type: Sequelize.FLOAT,
+        allowNull: false
+      }
+      ,
       address: {
         type: Sequelize.STRING,
         allowNull: false

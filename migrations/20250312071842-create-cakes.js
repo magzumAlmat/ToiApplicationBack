@@ -9,9 +9,10 @@ module.exports = {
         autoIncrement: true,
         allowNull: false
       },
-      salonName: {
+      name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true,
       },
       address: {
         type: Sequelize.STRING,

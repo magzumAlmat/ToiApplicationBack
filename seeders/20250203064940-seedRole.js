@@ -8,15 +8,15 @@ module.exports = {
     // Создаем роли
     await Role.bulkCreate([
       { name: 'admin' },
-      { name: 'supplier' }, // Тот, кто держит уже билборды и его проверяет инспектор
-      { name: 'client' }, // Тот, кто будет закупать рекламу и отдавать на проверку
+      { name: 'teacher' }, // Тот, кто держит уже билборды и его проверяет инспектор
+      { name: 'student' }, // Тот, кто будет закупать рекламу и отдавать на проверку
     ]);
 
     // Получаем созданные роли для использования их ID
     const roles = await Role.findAll();
     const adminRole = roles.find((role) => role.name === 'admin');
-    const teacherRole = roles.find((role) => role.name === 'supplier');
-    const studentRole = roles.find((role) => role.name === 'client');
+    const teacherRole = roles.find((role) => role.name === 'teacher');
+    const studentRole = roles.find((role) => role.name === 'student');
 
     // Хешируем пароли для пользователей
     const hashedPasswordAdmin = await bcrypt.hash('1', 10);
