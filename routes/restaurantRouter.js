@@ -4,7 +4,7 @@ const router = express.Router();
 
 // const passport = require('passport');
 
-const { createRestaurant,getAllRestaurants ,getAllRestaurantById,getAllRestaurantByIdId,updateRestaurant} = require('../controllers/RestaurantController');
+const { createRestaurant,getAllRestaurants ,getAllRestaurantById,getAllRestaurantByIdId,updateRestaurant,deleteRestaurant} = require('../controllers/RestaurantController');
 // Создать курс
 
 router.post('/restaurant', createRestaurant);
@@ -12,5 +12,6 @@ router.post('/restaurant', createRestaurant);
 router.get(`/restaurants`, getAllRestaurants);
 router.get(`/restaurantbyid/:id`, getAllRestaurantByIdId);
 router.put('/restaurant/:id',updateRestaurant)
+router.delete('/restaurant/:id',deleteRestaurant)
 module.exports = router;
 
