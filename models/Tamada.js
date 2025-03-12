@@ -17,7 +17,11 @@ const Tamada = sequelize.define('Tamada', {
         type: DataTypes.FLOAT,
         allowNull: false,
         validate: { min: { args: [0], msg: 'Стоимость не может быть отрицательной' } }
-    }
+    },
+    supplier_id:{
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
 }, {
     tableName: 'Tamada',
     timestamps: true,

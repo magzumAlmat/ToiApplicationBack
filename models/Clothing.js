@@ -56,7 +56,11 @@ const Clothing = sequelize.define('Clothing', {
         validate: {
             min: { args: [0], msg: 'Стоимость не может быть отрицательной' }
         }
-    }
+    },
+    supplier_id:{
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
 }, {
     tableName: 'Clothing',
     timestamps: true,

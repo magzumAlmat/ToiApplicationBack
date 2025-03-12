@@ -37,6 +37,11 @@ module.exports = {
         type: Sequelize.FLOAT,
         allowNull: false
       },
+      
+      supplier_id: {
+        allowNull: true,
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

@@ -1,9 +1,9 @@
 const Alcohol = require('../models/Alcohol');
 
 exports.createAlcohol = async (req, res) => {
-    const { salonName, address, phone, district, alcoholName, category, cost } = req.body;
+    const { salonName, address, phone, district, alcoholName, category, cost ,supplier_id} = req.body;
     try {
-        const alcohol = await Alcohol.create({ salonName, address, phone, district, alcoholName, category, cost });
+        const alcohol = await Alcohol.create({ salonName, address, phone, district, alcoholName, category, cost ,supplier_id});
         res.status(201).json(alcohol);
     } catch (error) {
         res.status(500).json({ error: error.message });

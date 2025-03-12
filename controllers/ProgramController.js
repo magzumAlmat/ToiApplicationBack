@@ -1,9 +1,9 @@
 const Program = require('../models/Program');
 
 exports.createProgram = async (req, res) => {
-    const { teamName, cost, type } = req.body;
+    const { teamName, cost, type ,supplier_id} = req.body;
     try {
-        const program = await Program.create({ teamName, cost, type });
+        const program = await Program.create({ teamName, cost, type,supplier_id });
         res.status(201).json(program);
     } catch (error) {
         res.status(500).json({ error: error.message });

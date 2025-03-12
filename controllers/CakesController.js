@@ -1,9 +1,9 @@
 const Cakes = require('../models/Cakes');
 
 exports.createCake = async (req, res) => {
-    const { salonName, address, phone, district, cakeType, cost } = req.body;
+    const { salonName, address, phone, district, cakeType, cost ,supplier_id } = req.body;
     try {
-        const cake = await Cakes.create({ salonName, address, phone, district, cakeType, cost });
+        const cake = await Cakes.create({ salonName, address, phone, district, cakeType, cost ,supplier_id});
         res.status(201).json(cake);
     } catch (error) {
         res.status(500).json({ error: error.message });

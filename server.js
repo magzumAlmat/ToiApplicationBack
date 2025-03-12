@@ -15,7 +15,8 @@ app.get('/api/data', (req, res) => {
 app.use(require('./auth/routes'));
 const restaurantRouter = require('./routes/restaurantRouter');
 app.use('/api', restaurantRouter);
-
+const superRouter=require('./routes/superRouter')
+app.use('/api', superRouter);
 
 
 const PORT = 6666;

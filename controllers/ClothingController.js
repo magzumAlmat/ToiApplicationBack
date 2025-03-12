@@ -1,9 +1,10 @@
 const Clothing = require('../models/Clothing');
 
 exports.createClothing = async (req, res) => {
-    const { storeName, address, phone, district, gender, itemName, cost } = req.body;
+    console.log('create clothing')
+    const { storeName, address, phone, district, gender, itemName, cost,supplier_id } = req.body;
     try {
-        const clothing = await Clothing.create({ storeName, address, phone, district, gender, itemName, cost });
+        const clothing = await Clothing.create({ storeName, address, phone, district, gender, itemName, cost,supplier_id });
         res.status(201).json(clothing);
     } catch (error) {
         res.status(500).json({ error: error.message });

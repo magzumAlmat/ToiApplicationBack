@@ -22,7 +22,11 @@ const Program = sequelize.define('Program', {
         type: DataTypes.STRING,
         allowNull: false,
         validate: { notEmpty: { msg: 'Укажите вид программы' } }
-    }
+    },
+    supplier_id:{
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
 }, {
     tableName: 'Programs',
     timestamps: true,

@@ -1,9 +1,9 @@
 const TraditionalGifts = require('../models/TraditionalGifts');
 
 exports.createTraditionalGift = async (req, res) => {
-    const { salonName, address, phone, district, itemName, type, cost } = req.body;
+    const { salonName, address, phone, district, itemName, type, cost ,supplier_id } = req.body;
     try {
-        const gift = await TraditionalGifts.create({ salonName, address, phone, district, itemName, type, cost });
+        const gift = await TraditionalGifts.create({ salonName, address, phone, district, itemName, type, cost ,supplier_id});
         res.status(201).json(gift);
     } catch (error) {
         res.status(500).json({ error: error.message });

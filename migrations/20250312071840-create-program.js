@@ -20,6 +20,11 @@ module.exports = {
       type: {
         type: Sequelize.STRING,
         allowNull: false
+      }
+      ,
+      supplier_id: {
+        allowNull: true,
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         type: Sequelize.DATE,

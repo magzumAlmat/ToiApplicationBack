@@ -42,7 +42,11 @@ const Flowers = sequelize.define('Flowers', {
         type: DataTypes.FLOAT,
         allowNull: false,
         validate: { min: { args: [0], msg: 'Стоимость не может быть отрицательной' } }
-    }
+    },
+    supplier_id:{
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
 }, {
     tableName: 'Flowers',
     timestamps: true,

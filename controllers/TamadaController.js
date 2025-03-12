@@ -1,9 +1,9 @@
 const Tamada = require('../models/Tamada');
 
 exports.createTamada = async (req, res) => {
-    const { portfolio, cost } = req.body;
+    const { portfolio, cost,supplier_id } = req.body;
     try {
-        const tamada = await Tamada.create({ portfolio, cost });
+        const tamada = await Tamada.create({ portfolio, cost,supplier_id });
         res.status(201).json(tamada);
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -42,7 +42,11 @@ const Transport = sequelize.define('Transport', {
         type: DataTypes.STRING,
         allowNull: false,
         validate: { notEmpty: { msg: 'Укажите марку' } }
-    }
+    },
+    supplier_id:{
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
 }, {
     tableName: 'Transport',
     timestamps: true,

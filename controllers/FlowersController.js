@@ -1,9 +1,9 @@
 const Flowers = require('../models/Flowers');
 
 exports.createFlowers = async (req, res) => {
-    const { salonName, address, phone, district, flowerName, flowerType, cost } = req.body;
+    const { salonName, address, phone, district, flowerName, flowerType, cost ,supplier_id} = req.body;
     try {
-        const flowers = await Flowers.create({ salonName, address, phone, district, flowerName, flowerType, cost });
+        const flowers = await Flowers.create({ salonName, address, phone, district, flowerName, flowerType, cost ,supplier_id});
         res.status(201).json(flowers);
     } catch (error) {
         res.status(500).json({ error: error.message });
