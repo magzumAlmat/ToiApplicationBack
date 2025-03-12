@@ -4,10 +4,13 @@ const router = express.Router();
 
 // const passport = require('passport');
 
-const { createRestaurant } = require('../controllers/RestaurantController');
+const { createRestaurant,getAllRestaurants ,getAllRestaurantById,getAllRestaurantByIdId,updateRestaurant} = require('../controllers/RestaurantController');
 // Создать курс
 
 router.post('/restaurant', createRestaurant);
-
-
+// router.get(`/restaurant/:id`, getAllRestaurantById);
+router.get(`/restaurants`, getAllRestaurants);
+router.get(`/restaurantbyid/:id`, getAllRestaurantByIdId);
+router.put('/restaurant/:id',updateRestaurant)
 module.exports = router;
+
