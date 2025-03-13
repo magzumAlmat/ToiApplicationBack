@@ -3,11 +3,11 @@ const sequelize = require('../config/db');
 
 const Restaurant = sequelize.define('Restaurant', {
     id: {
-        type: DataTypes.UUID, // Изменено на UUID
-        defaultValue: DataTypes.UUIDV4,
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: false,
-      },
+        autoIncrement: true,
+        allowNull: false
+    },
     name: {
         type: DataTypes.STRING,
         allowNull: false,

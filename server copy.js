@@ -303,6 +303,7 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
+app.use(express.static(__dirname+'/public'))
 // Обработчик загрузки файлов
 app.post("/api/upload", upload.single("file"), async (req, res) => {
   console.log('Должен создасться файл')
@@ -353,6 +354,8 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 // Статическая раздача файлов
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+
+app.use('/uploads/zal.MP4', express.static(path.join(__dirname, 'uploads')));
 // Запуск сервера
 app.listen(PORT, (err) => {
   if (err) {

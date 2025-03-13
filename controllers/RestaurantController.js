@@ -2,16 +2,16 @@ const { FLOAT } = require('sequelize');
 const Restaurant  = require('../models/Restaurant');
 
  exports.createRestaurant = async (req, res) => {
-    console.log('create Restaurant started',req.body)
+    console.log('create Restaurant',req.body)
     const { supplier_id,name, capacity, cuisine, averageCost,address,phone,district} = req.body;
-    console.log(typeof(name), typeof(Number(capacity)), typeof(cuisine), typeof(averageCost),typeof(address),typeof(phone),typeof(district))
+    console.log(typeof(name), typeof(Number(capacity)), typeof(cuisine), 'averageCost',typeof(averageCost) ,averageCost,typeof(address),typeof(phone),typeof(district))
   
     try {
     const restaurant = await Restaurant.create({
       name: name,
       capacity: capacity,
       cuisine: cuisine,
-      averageCost: averageCost,
+      averageCost: Number(averageCost),
       address: address,
       phone: phone,
       district: district,
@@ -86,7 +86,7 @@ exports.getAllRestaurantByIdId = async (req, res) => {
 
 };
 exports.deleteRestaurant= async (req, res) => {
-  console.log('delete restautant started')
+  console.log
   const { id } = req.params;
   try {
       const deleted = await Restaurant.destroy({
