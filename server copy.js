@@ -280,10 +280,11 @@ const fileFilter = (req, file, cb) => {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
     "application/msword", // DOC
     "application/pdf", // PDF
-    "image/vnd.djvu", // DJVU
-    "image/x-djvu", // DJVU (альтернативный MIME-тип)
+    "image/jpeg", // DJVU
+    "image/png", // DJVU (альтернативный MIME-тип)
     "video/mp4", // MP4
     "*/*",
+    
     "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 
   ];
@@ -304,6 +305,7 @@ const upload = multer({
 
 // Обработчик загрузки файлов
 app.post("/api/upload", upload.single("file"), async (req, res) => {
+  console.log('Должен создасться файл')
   try {
     if (!req.file) {
       return res.status(400).send("No file uploaded.");
