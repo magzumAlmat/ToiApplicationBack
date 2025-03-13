@@ -62,7 +62,7 @@ const Clothing = sequelize.define('Clothing', {
         allowNull: true
     },
 }, {
-    tableName: 'Clothing',
+    tableName: 'clothings',
     timestamps: true,
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',

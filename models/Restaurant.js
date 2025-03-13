@@ -3,11 +3,11 @@ const sequelize = require('../config/db');
 
 const Restaurant = sequelize.define('Restaurant', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID, // Изменено на UUID
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
-    },
+        allowNull: false,
+      },
     name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -78,15 +78,13 @@ const Restaurant = sequelize.define('Restaurant', {
         allowNull: true
     },
 }, {
-    tableName: 'Restaurants', // Исправлено на точное совпадение с миграцией
+    tableName: "restaurants",
     timestamps: true,
-    createdAt: 'createdAt',   // Используем camelCase как в миграции
-    updatedAt: 'updatedAt',
+    createdAt: "createdAt",
+    updatedAt: "updatedAt",
     defaultScope: {
-        attributes: {
-            exclude: ['createdAt', 'updatedAt']
-        }
-    }
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+    },
 });
 
 module.exports = Restaurant;

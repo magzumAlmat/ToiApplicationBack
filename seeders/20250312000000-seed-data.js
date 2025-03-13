@@ -67,7 +67,7 @@ module.exports = {
 
       await queryInterface.bulkInsert("Cakes", [
         {
-          name: "Тортовый рай",
+          name: "Портовый рай",
           address: "ул. Тлендиева 12",
           phone: "+7 (705) 678-90-12",
           district: "Алмалинский",
@@ -123,7 +123,7 @@ module.exports = {
         },
       ]);
 
-      await queryInterface.bulkInsert("Clothing", [
+      await queryInterface.bulkInsert("clothings", [
         {
           storeName: "Стильный шик",
           address: "ул. Желтоксан 10",
@@ -292,7 +292,7 @@ module.exports = {
       ]);
 
 
-      await queryInterface.bulkInsert("Restaurants", [
+      await queryInterface.bulkInsert("restaurants", [
         {
           name: "Уютный дом",
           capacity: "30 человек",
@@ -533,11 +533,11 @@ module.exports = {
   down: async (queryInterface, Sequelize) => {
     await queryInterface.bulkDelete("Alcohol", null, {});
     await queryInterface.bulkDelete("Cakes", null, {});
-    await queryInterface.bulkDelete("Clothing", null, {});
+    await queryInterface.bulkDelete("clothings", null, {});
     await queryInterface.bulkDelete("Flowers", null, {});
     await queryInterface.bulkDelete("Programs", null, {});
     
-    await queryInterface.bulkDelete("Restaurants", null, {});
+    await queryInterface.bulkDelete("restaurants", null, {});
     await queryInterface.bulkDelete("Tamada", null, {});
     await queryInterface.bulkDelete("TraditionalGifts", null, {});
     await queryInterface.bulkDelete("Transport", null, {});

@@ -1,6 +1,15 @@
+// models/File.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const Material = require("./Materials"); // Импортируем модель Material
+const Restaurant = require("./Restaurant");
+const Clothing = require("./Clothing");
+const Tamada = require("./Tamada");
+const Program = require("./Program");
+const TraditionalGift = require("./TraditionalGifts");
+const Flowers = require("./Flowers");
+const Cake = require("./Cakes");
+const Alcohol = require("./Alcohol");
+const Transport = require("./Transport");
 
 const File = sequelize.define("File", {
   id: {
@@ -20,20 +29,89 @@ const File = sequelize.define("File", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  material_id: {
+  restaurant_id: {
     type: DataTypes.INTEGER,
     references: {
-      model: "materials",
-      key: "material_id",
+      model: "restaurants",
+      key: "id",
+    },
+    allowNull: true,
+  },
+  clothing_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: "clothings",
+      key: "id",
+    },
+    allowNull: true,
+  },
+  tamada_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: "tamadas",
+      key: "id",
+    },
+    allowNull: true,
+  },
+  program_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: "programs",
+      key: "id",
+    },
+    allowNull: true,
+  },
+  traditional_gift_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: "traditional_gifts",
+      key: "id",
+    },
+    allowNull: true,
+  },
+  flowers_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: "flowers",
+      key: "id",
+    },
+    allowNull: true,
+  },
+  cake_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: "cakes",
+      key: "id",
+    },
+    allowNull: true,
+  },
+  alcohol_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: "alcohols",
+      key: "id",
+    },
+    allowNull: true,
+  },
+  transport_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: "transports",
+      key: "id",
     },
     allowNull: true,
   },
 });
 
-// Устанавливаем связь "многие к одному"
-File.belongsTo(Material, {
-  foreignKey: 'material_id', // Поле material_id в модели File
-  as: 'material', // Алиас для связи
-});
+// Устанавливаем связи "многие к одному"
+File.belongsTo(Restaurant, { foreignKey: "restaurant_id", as: "restaurant" });
+File.belongsTo(Clothing, { foreignKey: "clothing_id", as: "clothing" });
+File.belongsTo(Tamada, { foreignKey: "tamada_id", as: "tamada" });
+File.belongsTo(Program, { foreignKey: "program_id", as: "program" });
+File.belongsTo(TraditionalGift, { foreignKey: "traditional_gift_id", as: "traditionalGift" });
+File.belongsTo(Flowers, { foreignKey: "flowers_id", as: "flowers" });
+File.belongsTo(Cake, { foreignKey: "cake_id", as: "cake" });
+File.belongsTo(Alcohol, { foreignKey: "alcohol_id", as: "alcohol" });
+File.belongsTo(Transport, { foreignKey: "transport_id", as: "transport" });
 
 module.exports = File;

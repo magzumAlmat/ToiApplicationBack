@@ -8,6 +8,7 @@ const Cakes = sequelize.define('Cakes', {
         autoIncrement: true,
         allowNull: false
     },
+    
     name: {
         type: DataTypes.STRING,
         allowNull: false,
