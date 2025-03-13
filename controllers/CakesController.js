@@ -1,5 +1,5 @@
 const Cakes = require('../models/Cakes');
-
+const File =require('../models/File')
 exports.createCake = async (req, res) => {
     const { salonName, address, phone, district, cakeType, cost ,supplier_id } = req.body;
     try {
@@ -46,6 +46,7 @@ exports.updateCake = async (req, res) => {
 exports.deleteCake = async (req, res) => {
     const { id } = req.params;
     try {
+        await File.destroy({ where: { cake_id: id } });
         const deleted = await Cakes.destroy({ where: { id } });
         if (deleted) return res.status(204).send();
         res.status(404).json({ error: 'Торт не найден' });

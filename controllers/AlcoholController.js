@@ -1,5 +1,5 @@
 const Alcohol = require('../models/Alcohol');
-
+const File =require('../models/File')
 exports.createAlcohol = async (req, res) => {
     const { salonName, address, phone, district, alcoholName, category, cost ,supplier_id} = req.body;
     try {
@@ -46,6 +46,7 @@ exports.updateAlcohol = async (req, res) => {
 exports.deleteAlcohol = async (req, res) => {
     const { id } = req.params;
     try {
+        await File.destroy({ where: { alcohol_id: id } });
         const deleted = await Alcohol.destroy({ where: { id } });
         if (deleted) return res.status(204).send();
         res.status(404).json({ error: 'Алкоголь не найден' });

@@ -1,5 +1,5 @@
 const Clothing = require('../models/Clothing');
-
+const File =require('../models/File')
 exports.createClothing = async (req, res) => {
     console.log('create clothing')
     const { storeName, address, phone, district, gender, itemName, cost,supplier_id } = req.body;
@@ -47,6 +47,7 @@ exports.updateClothing = async (req, res) => {
 exports.deleteClothing = async (req, res) => {
     const { id } = req.params;
     try {
+        await File.destroy({ where: { clothing_id: id } });
         const deleted = await Clothing.destroy({ where: { id } });
         if (deleted) return res.status(204).send();
         res.status(404).json({ error: 'Одежда не найдена' });

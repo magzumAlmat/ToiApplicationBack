@@ -1,5 +1,5 @@
 const TraditionalGifts = require('../models/TraditionalGifts');
-
+const File =require('../models/File')
 exports.createTraditionalGift = async (req, res) => {
     const { salonName, address, phone, district, itemName, type, cost ,supplier_id } = req.body;
     try {
@@ -46,6 +46,7 @@ exports.updateTraditionalGift = async (req, res) => {
 exports.deleteTraditionalGift = async (req, res) => {
     const { id } = req.params;
     try {
+        await File.destroy({ where: { traditional_gift_id: id } });
         const deleted = await TraditionalGifts.destroy({ where: { id } });
         if (deleted) return res.status(204).send();
         res.status(404).json({ error: 'Подарок не найден' });

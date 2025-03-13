@@ -1,5 +1,5 @@
 const Program = require('../models/Program');
-
+const File =require('../models/File')
 exports.createProgram = async (req, res) => {
     const { teamName, cost, type ,supplier_id} = req.body;
     try {
@@ -46,6 +46,7 @@ exports.updateProgram = async (req, res) => {
 exports.deleteProgram = async (req, res) => {
     const { id } = req.params;
     try {
+        await File.destroy({ where: { program_id: id } });
         const deleted = await Program.destroy({ where: { id } });
         if (deleted) return res.status(204).send();
         res.status(404).json({ error: 'Программа не найдена' });

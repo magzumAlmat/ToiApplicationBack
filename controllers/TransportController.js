@@ -1,5 +1,5 @@
 const Transport = require('../models/Transport');
-
+const File =require('../models/File')
 exports.createTransport = async (req, res) => {
     const { salonName, address, phone, district, carName, color, brand ,supplier_id} = req.body;
     try {
@@ -46,6 +46,7 @@ exports.updateTransport = async (req, res) => {
 exports.deleteTransport = async (req, res) => {
     const { id } = req.params;
     try {
+        await File.destroy({ where: { transport_id: id } });
         const deleted = await Transport.destroy({ where: { id } });
         if (deleted) return res.status(204).send();
         res.status(404).json({ error: 'Транспорт не найден' });

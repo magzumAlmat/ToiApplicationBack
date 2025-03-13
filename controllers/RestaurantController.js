@@ -1,6 +1,6 @@
 const { FLOAT } = require('sequelize');
 const Restaurant  = require('../models/Restaurant');
-
+const File =require('../models/File')
  exports.createRestaurant = async (req, res) => {
     console.log('create Restaurant',req.body)
     const { supplier_id,name, capacity, cuisine, averageCost,address,phone,district} = req.body;
@@ -91,22 +91,23 @@ exports.getAllRestaurantByIdId = async (req, res) => {
   }
 
 };
-exports.deleteRestaurant= async (req, res) => {
-  console.log
+exports.deleteRestaurant = async (req, res) => {
   const { id } = req.params;
   try {
-      const deleted = await Restaurant.destroy({
-        where: { id: id },
-      });
-      if (deleted) {
-        return res.status(204).send();
-      }
-      res.status(404).json({ error: 'Restaurant not found' });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    // Сначала удаляем связанные файлы
+    await File.destroy({ where: { restaurant_id: id } });
+    // Затем удаляем ресторан
+    const deleted = await Restaurant.destroy({
+      where: { id: id },
+    });
+    if (deleted) {
+      return res.status(204).send();
     }
-
-}
+    res.status(404).json({ error: 'Restaurant not found' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 exports.updateRestaurant = async (req, res) => {
   const { id } = req.params;
   const { name, capacity, cuisine, averageCost, address, phone, district, supplier_id } = req.body;

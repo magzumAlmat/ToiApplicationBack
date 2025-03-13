@@ -1,5 +1,5 @@
 const Tamada = require('../models/Tamada');
-
+const File =require('../models/File')
 exports.createTamada = async (req, res) => {
     const { portfolio, cost,supplier_id } = req.body;
     try {
@@ -46,6 +46,7 @@ exports.updateTamada = async (req, res) => {
 exports.deleteTamada = async (req, res) => {
     const { id } = req.params;
     try {
+        await File.destroy({ where: { tamada_id: id } });
         const deleted = await Tamada.destroy({ where: { id } });
         if (deleted) return res.status(204).send();
         res.status(404).json({ error: 'Тамада не найден' });
