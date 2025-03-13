@@ -19,9 +19,15 @@ const Restaurant  = require('../models/Restaurant');
     });
 
     res.status(201).json(restaurant);
+
+
+
+
+    
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+
 };
 
 

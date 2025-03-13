@@ -13,10 +13,11 @@ const Transport = require("./Transport");
 
 const File = sequelize.define("File", {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
+    type: DataTypes.INTEGER,
     primaryKey: true,
-  },
+    autoIncrement: true,
+    allowNull: false
+},
   name: {
     type: DataTypes.STRING,
     allowNull: false,

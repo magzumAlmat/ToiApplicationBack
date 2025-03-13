@@ -1,11 +1,5 @@
 const express = require("express");
-// const { 
-//   uploadFile, 
-//   listFiles, 
-//   getFileById, 
-//   updateFile, 
-//   deleteFile 
-// } = require("../controllers/FileController");
+
 
 
 const  FileController = require( "../controllers/FileController")
@@ -14,7 +8,7 @@ const File= require('../models/File')
 const router = express.Router();
 
 // Create
-// router.post("/upload", upload.single("file"), uploadFile);
+router.post("/upload/:fileId", upload.single("file"), FileController.updateFile);
 
 // Read All
 // router.get("/files", listFiles);
