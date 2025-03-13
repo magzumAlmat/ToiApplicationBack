@@ -144,9 +144,10 @@ app.get("/api/data", (req, res) => {
 
 app.use(require("./auth/routes"));
 const restaurantRouter = require("./routes/restaurantRouter");
+app.use("/api", restaurantRouter);
 const filesRouter = require("./routes/fileRouter");
 
-app.use("/api", restaurantRouter);
+app.use("/api", filesRouter);
 const superRouter = require("./routes/superRouter");
 app.use("/api", superRouter);
 
@@ -202,22 +203,30 @@ app.post("/api/:entityType/:entityId/files", upload, async (req, res) => {
     const { originalname, path: filePath } = req.file;
     const correctName = req.body.name || originalname; // Используем имя из тела запроса или оригинальное имя файла
 
-    console.log("File uploaded to folder:", correctName,entityType);
+    console.log("1 File uploaded to folder:", correctName,'entity type',entityType,'filepath',filePath);
 
     // Переименовываем файл
+    // console.log("2 FD",correctName)
 
     const newFilePath = path.join(
       path.dirname(filePath),
-      correctName + path.extname(originalname)
+      correctName 
+      // ,
+      // path.extname(originalname)
     );
     await fs.rename(filePath, newFilePath);
 
+    
     // Формируем данные для создания записи в базе
+
+
+    console.log("3 FD",newFilePath)
     const fileData = {
       name: correctName,
       path: newFilePath,
       mimetype: req.file.mimetype,
     };
+    console.log("4 FD",fileData)
 
     // Привязываем файл к указанной сущности
     switch (entityType.toLowerCase()) {
