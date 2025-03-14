@@ -64,3 +64,8 @@ alcohol
       
 transport
     
+
+
+
+
+создание тунеля  ngrok http http://localhost:6666
