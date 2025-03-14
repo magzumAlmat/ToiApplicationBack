@@ -1,9 +1,9 @@
 const Transport = require('../models/Transport');
 const File =require('../models/File')
 exports.createTransport = async (req, res) => {
-    const { salonName, address, phone, district, carName, color, brand ,supplier_id} = req.body;
+    const { salonName, address, phone, district, carName, color, brand ,supplier_id,cost} = req.body;
     try {
-        const transport = await Transport.create({ salonName, address, phone, district, carName, color, brand,supplier_id });
+        const transport = await Transport.create({ salonName, address, phone, district, carName, color, brand,supplier_id,cost });
         res.status(201).json(transport);
     } catch (error) {
         res.status(500).json({ error: error.message });
