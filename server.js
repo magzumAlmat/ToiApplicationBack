@@ -137,7 +137,11 @@ const weddingRoutes = require('./routes/WeddingRoutes');
 const weddingItemRoutes = require('./routes/WeddingItemRoutes');
 const wishlistRoutes = require('./routes/WhishListRoutes');
 
-app.use(cors());
+app.use(cors({
+  origin: "*", // Разрешить запросы от всех источников для тестирования
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -149,6 +153,105 @@ app.get("/api/data", (req, res) => {
   res.json({ message: "Hello from Node.js backend!" });
 });
 
+
+
+
+const Wedding=require('./models/Wedding')
+const Wishlist=require('./models/Whishlist')
+
+
+// server.js (фрагмент с маршрутом)
+app.get("/api/weddingwishes/:weddingId", async (req, res) => {
+  console.log("Запрос на /api/weddingwishes/:weddingId стартовал", req.params);
+  const { weddingId } = req.params;
+  try {
+    const wedding = await Wedding.findByPk(weddingId);
+    if (!wedding) {
+      console.log(`Свадьба с ID ${weddingId} не найдена`);
+      return res.status(404).send("Свадьба не найдена");
+    }
+    const wishlist = await Wishlist.findAll({ where: { wedding_id: weddingId } });
+    console.log("Данные свадьбы:", wedding.name, "Wishlist:", wishlist.length);
+
+    res.set("Content-Type", "text/html; charset=utf-8");
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="ru">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${wedding.name}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          ul { list-style-type: none; padding: 0; }
+          li { margin: 10px 0; }
+          button { padding: 5px 10px; background-color: #007BFF; color: white; border: none; cursor: pointer; }
+          button:disabled { background-color: #ccc; cursor: not-allowed; }
+        </style>
+      </head>
+      <body>
+        <h1>${wedding.name}</h1>
+        <p>Дата: ${wedding.date}</p>
+        <h2>Список подарков</h2>
+        <ul>
+          ${wishlist
+            .map(
+              item => `
+                <li>
+                  ${item.item_name} - ${item.is_reserved ? 'Зарезервировано' : 'Свободно'}
+                  ${
+                    item.is_reserved
+                      ? ` (${item.reserved_by_unknown || (item.Reserver ? item.Reserver.username : 'Кем-то')})`
+                      : `
+                        <form action="/api/weddingwishes/${item.id}/reserve" method="POST">
+                          <input type="text" name="name" placeholder="Ваше имя" required />
+                          <button type="submit">Зарезервировать</button>
+                        </form>
+                      `
+                  }
+                </li>
+              `
+            )
+            .join('')}
+        </ul>
+      </body>
+      </html>
+    `);
+  } catch (error) {
+    console.error("Ошибка при загрузке свадьбы:", error);
+    res.status(500).send("Ошибка при загрузке свадьбы");
+  }
+});
+
+// Новый маршрут для обработки резервирования
+app.post("/api/weddingwishes/:wishlistId/reserve", async (req, res) => {
+  const { wishlistId } = req.params;
+  const { name } = req.body; // Имя из формы
+
+  try {
+    const wishlistItem = await Wishlist.findByPk(wishlistId);
+    if (!wishlistItem) {
+      return res.status(404).send("Элемент не найден");
+    }
+
+    if (wishlistItem.is_reserved) {
+      return res.status(400).send("Этот подарок уже зарезервирован");
+    }
+
+    await wishlistItem.update({
+      is_reserved: true,
+      reserved_by_unknown: name, // Сохраняем имя из формы
+    });
+
+    // Перенаправляем обратно на страницу свадьбы
+    res.redirect(`/api/weddingwishes/${wishlistItem.wedding_id}`);
+  } catch (error) {
+    console.error("Ошибка при резервировании подарка:", error);
+    res.status(500).send("Ошибка при резервировании");
+  }
+});
+
+
 app.use(require("./auth/routes"));
 const restaurantRouter = require("./routes/restaurantRouter");
 app.use("/api", restaurantRouter);
@@ -158,7 +261,7 @@ app.use("/api", filesRouter);
 const superRouter = require("./routes/superRouter");
 app.use("/api", superRouter);
 
-app.use('/api/', weddingRoutes);
+
 app.use('/api/', weddingRoutes);
 app.use('/api/', weddingItemRoutes);
 app.use('/api/', wishlistRoutes);
@@ -312,7 +415,10 @@ app.post("/api/:entityType/:entityId/files", upload, async (req, res) => {
 // Статическая раздача файлов
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-const PORT = 6666;
+
+
+
+const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

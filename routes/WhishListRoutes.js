@@ -16,7 +16,9 @@ const authenticate = (req, res, next) => {
 router.post('/wishlist/',passport.authenticate('jwt', {session: false}), authenticate, wishlistController.createWishlistItem); // Создание элемента
 router.get('/wishlist/:weddingId', authenticate, wishlistController.getWishlistByWedding); // Получение списка по свадьбе
 router.get('/wishlist/item/:id', authenticate, wishlistController.getWishlistItem); // Получение одного элемента
-router.patch('/wishlist/:id/reserve', passport.authenticate('jwt', {session: false}),authenticate, wishlistController.reserveWishlistItem); // Резервирование подарка
+router.patch('/wishlist/:id/reserve',  wishlistController.reserveWishlistItem); // Резервирование подарка
 router.delete('/wishlist/:id', authenticate, wishlistController.deleteWishlistItem); // Удаление элемента
+
+
 
 module.exports = router;

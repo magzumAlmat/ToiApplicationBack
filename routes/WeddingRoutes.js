@@ -8,10 +8,10 @@ const authenticate = (req, res, next) => {
 };
 
 router.post('/weddings/addwedding', passport.authenticate('jwt', {session: false}),authenticate, weddingController.createWedding);
-router.get('/weddings', passport.authenticate('jwt', {session: false}),authenticate, weddingController.getWeddings);
+router.get('/getallweddings', passport.authenticate('jwt', {session: false}),authenticate, weddingController.getAllWeddings);
 
-router.get('/weddings/:id', passport.authenticate('jwt', {session: false}),authenticate, weddingController.getWedding);
-router.put('/weddings//:id', passport.authenticate('jwt', {session: false}),authenticate, weddingController.updateWedding);
+router.get('/weddings/:id', weddingController.getWedding);
+router.put('/updateweddingbyid/:id', passport.authenticate('jwt', { session: false }), authenticate,weddingController.updateWedding);
 router.delete('/weddings/:id', passport.authenticate('jwt', {session: false}),authenticate, weddingController.deleteWedding);
 
 module.exports = router;

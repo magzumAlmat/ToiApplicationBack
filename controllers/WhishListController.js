@@ -2,7 +2,7 @@ const { Wishlist, Wedding, User } = require('../models');
 
 // Создание нового элемента в списке желаний (Create)
 const createWishlistItem = async (req, res) => {
-  // console.log('createwishlist started',req.body,'req.user= ',req.user)
+  console.log('createwishlist started')
   const { wedding_id, item_name, description } = req.body;
   const userId = req.user?.id; // Предполагается, что userId приходит из middleware аутентификации
   
@@ -28,6 +28,7 @@ const createWishlistItem = async (req, res) => {
       wedding_id,
       item_name,
       description,
+      reserved_by_unknown:''
     });
 
     res.status(201).json({

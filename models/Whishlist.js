@@ -37,6 +37,10 @@ const Wishlist = sequelize.define('Wishlist', {
       key: 'id',
     },
   },
+  reserved_by_unknown: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+  },
   created_at: {
     type: DataTypes.DATE,
     allowNull: false,

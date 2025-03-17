@@ -39,6 +39,10 @@ module.exports = {
         },
         onDelete: 'SET NULL',
       },
+      reserved_by_unknown: {
+        type: Sequelize.STRING(255),
+        allowNull: false,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

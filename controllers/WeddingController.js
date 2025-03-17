@@ -65,7 +65,7 @@ const createWedding = async (req, res) => {
 };
 
 // Получение всех свадеб пользователя (Read - List)
-const getWeddings = async (req, res) => {
+const getAllWeddings = async (req, res) => {
   const userId = req.user?.id;
 
   try {
@@ -83,6 +83,7 @@ const getWeddings = async (req, res) => {
 
 // Получение одной свадьбы (Read - Single)
 const getWedding = async (req, res) => {
+  console.log('getWedding started',Wedding)
   const { id } = req.params;
 
   try {
@@ -106,11 +107,16 @@ const getWedding = async (req, res) => {
   }
 };
 
+
+
+
 // Обновление свадьбы (Update)
 const updateWedding = async (req, res) => {
+  
   const { id } = req.params;
   const { name, date } = req.body;
 
+  console.log('updateWedding  started',id,name,date)
   try {
     const wedding = await Wedding.findByPk(id);
     if (!wedding) {
@@ -162,7 +168,7 @@ const deleteWedding = async (req, res) => {
 
 module.exports = {
   createWedding,
-  getWeddings,
+  getAllWeddings,
   getWedding,
   updateWedding,
   deleteWedding,
