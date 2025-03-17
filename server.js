@@ -133,10 +133,17 @@ const multer = require("multer");
 const fs = require("fs").promises; // Используем промисы для асинхронного доступа к файлам
 const path = require("path");
 const File = require("./models/File");
+const weddingRoutes = require('./routes/WeddingRoutes');
+const weddingItemRoutes = require('./routes/WeddingItemRoutes');
+const wishlistRoutes = require('./routes/WhishListRoutes');
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+
+
 
 app.get("/api/data", (req, res) => {
   res.json({ message: "Hello from Node.js backend!" });
@@ -150,6 +157,12 @@ const filesRouter = require("./routes/fileRouter");
 app.use("/api", filesRouter);
 const superRouter = require("./routes/superRouter");
 app.use("/api", superRouter);
+
+app.use('/api/', weddingRoutes);
+app.use('/api/', weddingRoutes);
+app.use('/api/', weddingItemRoutes);
+app.use('/api/', wishlistRoutes);
+
 
 // Настройка Multer
 const storage = multer.diskStorage({

@@ -157,6 +157,7 @@ exports.getAllRestaurants = async (req, res) => {
   try {
     const Restaurants = await Restaurant.findAll();
     res.status(200).json(Restaurants);
+    console.log(Restaurants)
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

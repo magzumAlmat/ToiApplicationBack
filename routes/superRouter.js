@@ -122,4 +122,9 @@ router.get('/alcohol/:id', getAlcoholById);
 router.put('/alcohol/:id', updateAlcohol);
 router.delete('/alcohol/:id', deleteAlcohol);
 
+
+
+
+// router.post('/createwedding', weddingController.createWedding);
+
 module.exports = router;

@@ -39,6 +39,10 @@ const User = sequelize.define('User', {
         allowNull: true,
         unique: true,
       },
+      username: {  // Эта колонка должна быть определена
+        type: DataTypes.STRING(255),
+        allowNull: false,
+      },
    
 
 },{

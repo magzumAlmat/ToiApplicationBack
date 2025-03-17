@@ -8,8 +8,7 @@ const { createRestaurant,getAllRestaurants ,getAllRestaurantById,getAllRestauran
 // Создать курс
 
 router.post('/restaurant', createRestaurant);
-// router.get(`/restaurant/:id`, getAllRestaurantById);
-router.get(`/restaurants`, getAllRestaurants);
+router.get ('/restaurants', getAllRestaurants);
 router.get(`/restaurantbyid/:id`, getAllRestaurantByIdId);
 router.put('/restaurant/:id',updateRestaurant)
 router.delete('/restaurant/:id',deleteRestaurant)
