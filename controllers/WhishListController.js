@@ -129,6 +129,49 @@ const reserveWishlistItem = async (req, res) => {
   }
 };
 
+
+const reserveWishlistItemByUnknown = async (req, res) => {
+  console.log('reserveWishlistItem started')
+  const { id } = req.params;
+  const userId = req.user?.id; // ID текущего пользователя из middleware
+  const data=req.body.data
+  console.log('reserveWishlistItemByUnknown     ',req.body.data.reserved_by_unknown)
+  const unknownUser=req.body.data.reserved_by_unknown
+  try {
+    const wishlistItem = await Wishlist.findByPk(id);
+    if (!wishlistItem) {
+      return res.status(404).json({ success: false, error: 'Элемент не найден' });
+    }
+
+    if (wishlistItem.is_reserved) {
+      return res.status(400).json({ success: false, error: 'Этот подарок уже зарезервирован' });
+    }
+
+    // Проверка, что пользователь не является хозяином свадьбы
+    const wedding = await Wedding.findByPk(wishlistItem.wedding_id);
+    if (wedding.host_id === userId) {
+      return res.status(403).json({ success: false, error: 'Хозяин свадьбы не может резервировать подарки' });
+    }
+
+    await wishlistItem.update({
+      is_reserved: true,
+      reserved_by_unknown: unknownUser,
+    });
+
+    const updatedItem = await Wishlist.findByPk(id, {
+      include: [{ model: User, as: 'Reserver', attributes: ['id', 'username'] }],
+    });
+
+    res.status(200).json({
+      success: true,
+      data: updatedItem,
+      message: 'Подарок успешно зарезервирован',
+    });
+  } catch (error) {
+    console.error('Ошибка при резервировании подарка:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
 // Удаление элемента из списка желаний (Delete)
 const deleteWishlistItem = async (req, res) => {
   const { id } = req.params;
@@ -163,5 +206,5 @@ module.exports = {
   getWishlistByWedding,
   getWishlistItem,
   reserveWishlistItem,
-  deleteWishlistItem,
+  deleteWishlistItem,reserveWishlistItemByUnknown
 };

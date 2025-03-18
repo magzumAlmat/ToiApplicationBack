@@ -164,6 +164,9 @@ const Wishlist=require('./models/Whishlist')
 app.get("/api/weddingwishes/:weddingId", async (req, res) => {
   console.log("Запрос на /api/weddingwishes/:weddingId стартовал", req.params);
   const { weddingId } = req.params;
+  const applink  = `exp://172.20.10.7:8081/--/wishlist/${weddingId}`
+  
+  console.log('applink',applink)
   try {
     const wedding = await Wedding.findByPk(weddingId);
     if (!wedding) {
@@ -214,6 +217,7 @@ app.get("/api/weddingwishes/:weddingId", async (req, res) => {
             )
             .join('')}
         </ul>
+        <h4>Если у вас есть приложение, то можете пройти по ссылке <a href='${applink}'>${applink}</a></h4>
       </body>
       </html>
     `);
