@@ -154,7 +154,10 @@ app.get("/api/data", (req, res) => {
 });
 
 
+const goodsRoutes = require('./routes/goodsRouter');
 
+
+app.use('/api', goodsRoutes);
 
 const Wedding=require('./models/Wedding')
 const Wishlist=require('./models/Whishlist')
@@ -376,6 +379,9 @@ app.post("/api/:entityType/:entityId/files", upload, async (req, res) => {
         break;
       case "transport":
         fileData.transport_id = entityId;
+        break;
+        case "goods": // Добавляем поддержку goods
+        fileData.goods_id = entityId;
         break;
       default:
         await fs.unlink(newFilePath); // Удаляем файл, если сущность неверная

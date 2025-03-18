@@ -44,7 +44,7 @@ npx sequelize-cli db:migrate:undo:all
 npx sequelize-cli db:migrate
 npx sequelize-cli db:seed --seed 20250203064940-seedRole.js 
 npx sequelize-cli db:seed --seed 20250312000000-seed-data.js
-
+npx sequelize-cli db:seed --seed  20250318110618-goods.js
 
 
 restaurant

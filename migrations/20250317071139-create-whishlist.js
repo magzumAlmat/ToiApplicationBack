@@ -17,6 +17,15 @@ module.exports = {
         },
         onDelete: 'CASCADE',
       },
+      good_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Goods',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
+      },
       item_name: {
         type: Sequelize.STRING(255),
         allowNull: false,
@@ -58,6 +67,8 @@ module.exports = {
     // Добавление индексов для оптимизации
     await queryInterface.addIndex('Wishlist', ['wedding_id']);
     await queryInterface.addIndex('Wishlist', ['reserved_by']);
+    await queryInterface.addIndex('Wishlist', ['good_id']);
+
   },
 
   down: async (queryInterface, Sequelize) => {

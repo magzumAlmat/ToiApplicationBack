@@ -64,6 +64,12 @@ module.exports = {
         references: { model: "Transport", key: "id" },
         allowNull: true,
       },
+      goods_id: {
+        type: Sequelize.INTEGER, // Предполагаем INTEGER
+        references: { model: 'Goods',
+          key: 'id' },
+        allowNull: true,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

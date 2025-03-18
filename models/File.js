@@ -10,7 +10,7 @@ const Flowers = require("./Flowers");
 const Cake = require("./Cakes");
 const Alcohol = require("./Alcohol");
 const Transport = require("./Transport");
-
+const Goods=require('./Goods')
 const File = sequelize.define("File", {
   id: {
     type: DataTypes.INTEGER,
@@ -102,6 +102,14 @@ const File = sequelize.define("File", {
     },
     allowNull: true,
   },
+  goods_id: { // Новое поле
+    type: DataTypes.INTEGER,
+    references: {
+      model: "Goods",
+      key: "id",
+    },
+    allowNull: true,
+  },
 });
 
 // Устанавливаем связи "многие к одному"
@@ -114,5 +122,5 @@ File.belongsTo(Flowers, { foreignKey: "flowers_id", as: "flowers" });
 File.belongsTo(Cake, { foreignKey: "cake_id", as: "cake" });
 File.belongsTo(Alcohol, { foreignKey: "alcohol_id", as: "alcohol" });
 File.belongsTo(Transport, { foreignKey: "transport_id", as: "transport" });
-
+File.belongsTo(Goods, { foreignKey: "goods_id", as: "goods" }); // Новая связь
 module.exports = File;
