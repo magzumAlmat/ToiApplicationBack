@@ -1,16 +1,64 @@
 const { Wishlist, Wedding, User } = require('../models');
-
+const Goods=require('../models/Goods')
 // Создание нового элемента в списке желаний (Create)
-const createWishlistItem = async (req, res) => {
-  console.log('createwishlist started')
-  const { wedding_id, item_name, description } = req.body;
-  const userId = req.user?.id; // Предполагается, что userId приходит из middleware аутентификации
+// const createWishlistItem = async (req, res) => {
+//   console.log('createwishlist started')
+//   const { wedding_id, item_name, description } = req.body;
+//   const userId = req.user?.id; // Предполагается, что userId приходит из middleware аутентификации
   
-  // console.log('userid',userId)
-  if (!wedding_id || !item_name) {
+//   // console.log('userid',userId)
+//   if (!wedding_id || !item_name) {
+//     return res.status(400).json({
+//       success: false,
+//       error: 'wedding_id и item_name обязательны',
+//     });
+//   }
+
+//   try {
+//     // Проверка, что пользователь — хозяин свадьбы
+//     const wedding = await Wedding.findByPk(wedding_id);
+//     if (!wedding) {
+//       return res.status(404).json({ success: false, error: 'Свадьба не найдена' });
+//     }
+//     if (wedding.host_id !== userId) {
+//       return res.status(403).json({ success: false, error: 'Только хозяин свадьбы может добавлять элементы' });
+//     }
+
+//     const wishlistItem = await Wishlist.create({
+//       wedding_id,
+//       item_name,
+//       description,
+//       reserved_by_unknown:''
+//     });
+
+//     res.status(201).json({
+//       success: true,
+//       data: wishlistItem,
+//       message: 'Элемент добавлен в список желаний',
+//     });
+//   } catch (error) {
+//     console.error('Ошибка при создании элемента wishlist:', error);
+//     res.status(500).json({ success: false, error: 'Ошибка сервера' });
+//   }
+// };
+
+
+const createWishlistItem = async (req, res) => {
+  console.log('createWishlist started');
+  const { wedding_id, good_id, item_name, description } = req.body;
+  const userId = req.user?.id; // Предполагается, что userId приходит из middleware аутентификации
+
+  if (!wedding_id) {
     return res.status(400).json({
       success: false,
-      error: 'wedding_id и item_name обязательны',
+      error: 'wedding_id обязателен',
+    });
+  }
+
+  if (!good_id && !item_name) {
+    return res.status(400).json({
+      success: false,
+      error: 'Необходимо указать либо good_id, либо item_name',
     });
   }
 
@@ -24,12 +72,24 @@ const createWishlistItem = async (req, res) => {
       return res.status(403).json({ success: false, error: 'Только хозяин свадьбы может добавлять элементы' });
     }
 
-    const wishlistItem = await Wishlist.create({
-      wedding_id,
-      item_name,
-      description,
-      reserved_by_unknown:''
-    });
+    let wishlistData = { wedding_id, reserved_by_unknown: '' };
+
+    // Если указан good_id, берем данные из таблицы Goods
+    if (good_id) {
+      const good = await Goods.findByPk(good_id);
+      if (!good) {
+        return res.status(404).json({ success: false, error: 'Товар не найден' });
+      }
+      wishlistData.good_id = good_id;
+      wishlistData.item_name = good.item_name;
+      wishlistData.description = good.description || '';
+    } else {
+      // Если good_id не указан, используем переданные item_name и description
+      wishlistData.item_name = item_name;
+      wishlistData.description = description || '';
+    }
+
+    const wishlistItem = await Wishlist.create(wishlistData);
 
     res.status(201).json({
       success: true,

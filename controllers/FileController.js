@@ -121,6 +121,10 @@ class FileController {
         case "transport":
           whereClause = { transport_id: entityId };
           break;
+        case "goods":
+          whereClause = { goods_id: entityId };
+          break;
+            
         default:
           return res.status(400).json({ message: "Invalid entity type." });
       }
@@ -168,6 +172,9 @@ class FileController {
         case "transport":
           whereClause.transport_id = entityId;
           break;
+          case "goods":
+            whereClause.goods_id= entityId ;
+            break;
         default:
           return res.status(400).json({ message: "Invalid entity type." });
       }
