@@ -20,10 +20,11 @@ const Goods = sequelize.define('Goods', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  price_range: {
-    type: DataTypes.STRING(50), // Например, "5000-10000 руб"
-    allowNull: true,
-  },
+  cost: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+    validate: { min: { args: [0], msg: 'Стоимость не может быть отрицательной' } }
+},
   specs: {
     type: DataTypes.JSON, // JSON для хранения характеристик
     allowNull: true,

@@ -41,6 +41,8 @@ const createWeddingItem = async (req, res) => {
 // Получение всех элементов свадьбы (Read - List)
 const getWeddingItems = async (req, res) => {
   const { weddingId } = req.params;
+  console.log('weddingId ',weddingId ,'req.user.id',req.user?.id)
+
 
   try {
     const wedding = await Wedding.findByPk(weddingId);
@@ -50,8 +52,10 @@ const getWeddingItems = async (req, res) => {
     if (wedding.host_id !== req.user?.id) {
       return res.status(403).json({ success: false, error: 'Доступ запрещён' });
     }
+    console.log('wedding',wedding)
 
     const items = await WeddingItem.findAll({ where: { wedding_id: weddingId } });
+    console.log('wedding ITEM',items)
     res.status(200).json({ success: true, data: items });
   } catch (error) {
     console.error('Ошибка при получении wedding items:', error);

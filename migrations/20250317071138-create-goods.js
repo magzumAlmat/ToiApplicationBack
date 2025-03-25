@@ -20,9 +20,9 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true,
       },
-      price_range: {
-        type: Sequelize.STRING(50),
-        allowNull: true,
+      cost: {
+        type: Sequelize.FLOAT,
+        allowNull: false
       },
       specs: {
         type: Sequelize.JSON,

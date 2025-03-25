@@ -432,9 +432,10 @@ const login = async (req, res) => {
 const aUTH=async(req,res)=>{
   console.log('Регистрация стартовала',req.body.roleId)
   const { email, password, phone, name, lastname,roleId } = req.body;
+  const username='someUser'
 
   try {
-    const user = await User.create({ email, password, phone, name, lastname,roleId});
+    const user = await User.create({ email, password, phone, name, lastname,roleId,username});
 
     // Отправка письма для подтверждения
     const verificationLink = `${process.env.BACKEND_URL}/api/auth/verifylink/${user.id}`;
