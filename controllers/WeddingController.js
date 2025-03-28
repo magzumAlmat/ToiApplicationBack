@@ -1,9 +1,30 @@
-const { Wedding, WeddingItem } = require('../models');
+const { Wedding, WeddingItem ,BusinessAvailability} = require('../models');
 
 // Создание новой свадьбы (Create)
 const createWedding = async (req, res) => {
   const { name, date, items } = req.body;
   const host_id = req.user?.id; // ID пользователя из middleware аутентификации
+
+  try {
+    // Проверка доступности ресторана
+    const restaurantItem = items.find(item => item.type === 'restaurant');
+    if (restaurantItem) {
+      const isBooked = await BusinessAvailability.findOne({
+        where: {
+          restaurantId: restaurantItem.id,
+          date,
+        },
+      });
+
+      if (isBooked) {
+        return res.status(400).json({ message: 'Ресторан занят на выбранную дату' });
+      }
+    }
+
+   
+
+    // Здесь можно добавить логику для сохранения items, если требуется
+ 
 
   if (!name || !date) {
     return res.status(400).json({
@@ -12,6 +33,8 @@ const createWedding = async (req, res) => {
     });
   }
 
+
+
   const isValidDate = !isNaN(new Date(date).getTime());
   if (!isValidDate) {
     return res.status(400).json({
@@ -19,6 +42,7 @@ const createWedding = async (req, res) => {
       error: 'Неверный формат даты. Используйте YYYY-MM-DD',
     });
   }
+
 
   const transaction = await Wedding.sequelize.transaction();
   try {
@@ -62,6 +86,12 @@ const createWedding = async (req, res) => {
     console.error('Ошибка при создании свадьбы:', error);
     res.status(500).json({ success: false, error: error.message || 'Ошибка сервера' });
   }
+
+
+  res.status(201).json({ message: 'Свадьба успешно создана', wedding });
+} catch (error) {
+  res.status(500).json({ message: 'Ошибка сервера', error: error.message });
+}
 };
 
 // Получение всех свадеб пользователя (Read - List)

@@ -154,6 +154,11 @@ app.get("/api/data", (req, res) => {
   res.json({ message: "Hello from Node.js backend!" });
 });
 
+// app.js
+const businessAvailabilityRoutes = require('./routes/businessAvailabilityRouter');
+app.use('/api', businessAvailabilityRoutes);
+
+
 
 const goodsRoutes = require('./routes/goodsRouter');
 

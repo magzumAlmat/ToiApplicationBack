@@ -3,7 +3,9 @@
 
 // Создание экземпляра Sequelize
 const sequelize = require('../config/db')
-
+const Restaurant = require('./Restaurant');
+const BusinessAvailability = require('./BuisnessAvailable');
+const Wedding = require('./Wedding');
 // Экспортируем объект с sequelize сразу, чтобы избежать циклической зависимости
 const db = {
   sequelize,
@@ -29,7 +31,13 @@ db.Wishlist.belongsTo(db.Wedding, { foreignKey: 'wedding_id' });
 db.User.hasMany(db.Wishlist, { foreignKey: 'reserved_by', onDelete: 'SET NULL' });
 db.Wishlist.belongsTo(db.User, { foreignKey: 'reserved_by', as: 'Reserver' });
 
-module.exports = db;
+
+Restaurant.hasMany(BusinessAvailability, { foreignKey: 'restaurantId' });
+BusinessAvailability.belongsTo(Restaurant, { foreignKey: 'restaurantId' });
+
+module.exports = {db,Restaurant,
+  BusinessAvailability,
+  Wedding,};
 
 // Проверка подключения
 (async () => {

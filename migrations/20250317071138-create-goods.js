@@ -22,7 +22,7 @@ module.exports = {
       },
       cost: {
         type: Sequelize.FLOAT,
-        allowNull: false
+        allowNull: true
       },
       specs: {
         type: Sequelize.JSON,

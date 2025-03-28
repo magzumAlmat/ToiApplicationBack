@@ -22,7 +22,7 @@ const Goods = sequelize.define('Goods', {
   },
   cost: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: true,
     validate: { min: { args: [0], msg: 'Стоимость не может быть отрицательной' } }
 },
   specs: {
