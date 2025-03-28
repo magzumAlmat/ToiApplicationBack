@@ -6,5 +6,6 @@ const businessAvailabilityController = require('../controllers/BusinessAvailabil
 
 router.post('/block',  businessAvailabilityController.blockDay);
 router.get('/:restaurantId/blocked-days',  businessAvailabilityController.getBlockedDays);
-
+router.get('/restaurants-by-date', businessAvailabilityController.getRestaurantsByDate);
+router.get('/all-blocked-days', businessAvailabilityController.getAllBlockedDays);
 module.exports = router;
