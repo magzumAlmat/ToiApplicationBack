@@ -57,6 +57,7 @@ const getWeddingItems = async (req, res) => {
     const items = await WeddingItem.findAll({ where: { wedding_id: weddingId } });
     console.log('wedding ITEM',items)
     res.status(200).json({ success: true, data: items });
+    
   } catch (error) {
     console.error('Ошибка при получении wedding items:', error);
     res.status(500).json({ success: false, error: 'Ошибка сервера' });

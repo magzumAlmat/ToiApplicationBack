@@ -1,5 +1,7 @@
-const { Wishlist, Wedding, User } = require('../models');
+const {  Wedding} = require('../models');
 const Goods=require('../models/Goods')
+const Wishlist= require('../models/Whishlist')
+const User=require('../auth/models/User')
 // Создание нового элемента в списке желаний (Create)
 // const createWishlistItem = async (req, res) => {
 //   console.log('createwishlist started')
@@ -104,9 +106,9 @@ const createWishlistItem = async (req, res) => {
 
 // Получение списка желаний для свадьбы (Read - List)
 const getWishlistByWedding = async (req, res) => {
-  console.log('GET WHISHLIST BY ID started')
-  const { weddingId } = req.params;
 
+  const { weddingId } = req.params;
+  console.log('GET WHISHLIST BY ID started wedding id= ',weddingId)
   try {
     const wishlistItems = await Wishlist.findAll({
       where: { wedding_id: weddingId },

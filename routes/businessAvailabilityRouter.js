@@ -9,3 +9,4 @@ router.get('/:restaurantId/blocked-days',  businessAvailabilityController.getBlo
 router.get('/restaurants-by-date', businessAvailabilityController.getRestaurantsByDate);
 router.get('/all-blocked-days', businessAvailabilityController.getAllBlockedDays);
 module.exports = router;
+

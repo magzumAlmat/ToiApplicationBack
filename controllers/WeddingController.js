@@ -1,8 +1,10 @@
-const { Wedding, WeddingItem ,BusinessAvailability} = require('../models');
-
+const { Wedding,BusinessAvailability} = require('../models');
+const WeddingItem =require('../models/WeddingItem')
+// const BusinessAvailability=require('../models/BuisnessAvailable')
 // Создание новой свадьбы (Create)
 const createWedding = async (req, res) => {
   const { name, date, items } = req.body;
+  console.log(' бизнесы прикрепленные в свадьбу ',items)
   const host_id = req.user?.id; // ID пользователя из middleware аутентификации
 
   try {
@@ -51,6 +53,7 @@ const createWedding = async (req, res) => {
       { name, date, host_id },
       { transaction }
     );
+
 
     // Если есть items, добавляем их в WeddingItems
     if (items && Array.isArray(items)) {
