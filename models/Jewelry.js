@@ -1,0 +1,63 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
+
+const Jewelry = sequelize.define('Jewelry', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+    },
+    storeName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: { notEmpty: { msg: 'Наименование магазина обязательно' } }
+    },
+    address: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: { notEmpty: { msg: 'Адрес обязателен' } }
+    },
+    phone: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: { is: { args: /^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/, msg: 'Неверный формат телефона' } }
+    },
+    type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: { notEmpty: { msg: 'Укажите вид ' } }
+    },
+    district: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: { notEmpty: { msg: 'Укажите район или "за пределами Алматы"' } }
+    },
+    itemName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: { notEmpty: { msg: 'Наименование изделия обязательно' } }
+    },
+    material: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: { notEmpty: { msg: 'Укажите материал изделия' } }
+    },
+    cost: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        validate: { min: { args: [0], msg: 'Стоимость не может быть отрицательной' } }
+    },
+    supplier_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+}, {
+    tableName: 'Jewelry',
+    timestamps: true,
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    defaultScope: { attributes: { exclude: ['createdAt', 'updatedAt'] } }
+});
+
+module.exports = Jewelry;

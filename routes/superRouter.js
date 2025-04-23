@@ -66,6 +66,17 @@ const {
   deleteAlcohol
 } = require('../controllers/AlcoholController');
 
+
+
+
+const { createJewelry, getAllJewelry, getJewelryById, updateJewelry, deleteJewelry } = require('../controllers/JewelryController');
+
+router.post('/jewelry', createJewelry);
+router.get('/jewelry', getAllJewelry);
+router.get('/jewelry/:id', getJewelryById);
+router.put('/jewelry/:id', updateJewelry);
+router.delete('/jewelry/:id', deleteJewelry);
+
 // Роуты для "Одежда" (Clothing)
 router.post('/clothing', createClothing);              // Создать запись
 router.get('/clothing', getAllClothing);               // Получить все записи

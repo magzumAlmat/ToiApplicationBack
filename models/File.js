@@ -11,6 +11,7 @@ const Cake = require("./Cakes");
 const Alcohol = require("./Alcohol");
 const Transport = require("./Transport");
 const Goods=require('./Goods')
+const Jewelry=require('./Jewelry')
 const File = sequelize.define("File", {
   id: {
     type: DataTypes.INTEGER,
@@ -94,6 +95,14 @@ const File = sequelize.define("File", {
     },
     allowNull: true,
   },
+  jewelry_id :{
+    type: DataTypes.INTEGER,
+    references: {
+      model: "jewelrys",
+      key: "id",
+    },
+    allowNull: true,
+  },
   transport_id: {
     type: DataTypes.INTEGER,
     references: {
@@ -102,6 +111,7 @@ const File = sequelize.define("File", {
     },
     allowNull: true,
   },
+
   goods_id: { // Новое поле
     type: DataTypes.INTEGER,
     references: {
@@ -123,4 +133,5 @@ File.belongsTo(Cake, { foreignKey: "cake_id", as: "cake" });
 File.belongsTo(Alcohol, { foreignKey: "alcohol_id", as: "alcohol" });
 File.belongsTo(Transport, { foreignKey: "transport_id", as: "transport" });
 File.belongsTo(Goods, { foreignKey: "goods_id", as: "goods" }); // Новая связь
+File.belongsTo(Jewelry, { foreignKey: "jewelry_id", as: "jewelry" }); // Новая связь
 module.exports = File;

@@ -74,6 +74,7 @@ exports.getAllMaterials = async (req, res) => {
   try {
     const materials = await Material.findAll();
     res.status(200).json(materials);
+    
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
