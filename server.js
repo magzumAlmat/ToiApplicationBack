@@ -416,26 +416,60 @@ const storage = multer.diskStorage({
   },
 });
 
+// const fileFilter = (req, file, cb) => {
+//   const allowedTypes = [
+//     "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
+//     "application/msword", // DOC
+//     "application/pdf", // PDF
+//     "image/jpeg", // JPEG
+//     "image/png", // PNG
+//     "video/*", // MP4
+//     "application/vnd.openxmlformats-officedocument.presentationml.presentation", // PPTX
+  
+//     // Добавленные типы для HEVC
+//     "image/heif", // HEIF (изображения)
+//     "image/heic", // HEIC (изображения, часто используется в Apple)
+    
+//   ];
+//   if (allowedTypes.includes(file.mimetype)) {
+//     cb(null, true);
+//   } else {
+//     cb(
+//       new Error(
+//         "Invalid file type. Only DOC, DOCX, PDF, JPEG, PNG, MP4, and PPTX files are allowed."
+//       )
+//     );
+//   }
+// };
+
+
 const fileFilter = (req, file, cb) => {
+  const isVideo = file.mimetype.startsWith("video/");
   const allowedTypes = [
+    // Документы
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
     "application/msword", // DOC
     "application/pdf", // PDF
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation", // PPTX
+
+    // Изображения
     "image/jpeg", // JPEG
     "image/png", // PNG
-    "video/mp4", // MP4
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation", // PPTX
+    "image/heif", // HEIF
+    "image/heic", // HEIC
   ];
-  if (allowedTypes.includes(file.mimetype)) {
+
+  if (isVideo || allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(
       new Error(
-        "Invalid file type. Only DOC, DOCX, PDF, JPEG, PNG, MP4, and PPTX files are allowed."
+        "Invalid file type. Only documents, images, and video files are allowed."
       )
     );
   }
 };
+
 
 const upload = multer({
   storage: storage,

@@ -444,8 +444,8 @@ const aUTH=async(req,res)=>{
       "Подтверждение регистрации",
       `<div style="font-family: Arial, sans-serif; padding: 20px;">
       <h2 style="color: #1976d2;">Подтверждение регистрации</h2>
-      <p>Спасибо за регистрацию! Для подтверждения вашего email перейдите по ссылке ниже:</p>
-      <a href="${verificationLink}" style="display: inline-block; padding: 10px 20px; background-color: #1976d2; color: white; text-decoration: none; border-radius: 5px;">Подтвердить email</a>
+      // <p>Спасибо за регистрацию! Для подтверждения вашего email перейдите по ссылке ниже:</p>
+      // <a href="${verificationLink}" style="display: inline-block; padding: 10px 20px; background-color: #1976d2; color: white; text-decoration: none; border-radius: 5px;">Подтвердить email</a>
       <p style="color: #555;">Если вы не регистрировались, проигнорируйте это письмо.</p>
     </div>`
     );
@@ -732,16 +732,71 @@ const verifyCodeInspector=async(req,res)=>{
 // }
 
 
+// const addFullProfile = async (req, res) => {
+//   console.log('111 AddFullProfile Started', req.body);
+
+//   const { password, phone, name, lastname ,areasofactivity} = req.body;
+
+//   console.log('AddFullProfile Started', password, phone, name, lastname,areasofactivity);
+
+//   // if (!phone || !/^\d{10}$/.test(phone)) {
+//   //   return res.status(400).json({ message: 'Некорректный номер телефона. Номер должен содержать 10 цифр.' });
+//   // }
+
+//   const authHeader = req.headers['authorization'];
+
+//   if (!authHeader) {
+//     return res.status(401).json({ message: 'Authorization header is missing' });
+//   }
+
+//   // Check if the header starts with "Bearer "
+//   if (!authHeader.startsWith('Bearer ')) {
+//     return res.status(401).json({ message: 'Invalid token format' });
+//   }
+
+//   // Extract the token (remove "Bearer " from the header)
+//   const token = authHeader.substring(7);
+//   console.log('token =', token);
+//   // Now you have the JWT token in the 'token' variable
+//   // console.log('JWT Token:', token);
+
+//   const decodedToken = jwt.decode(token);
+//   console.log('Айди юзера который соответствует данному токену', decodedToken);
+
+//   let user = await User.findOne({ where: { email: decodedToken.email } });
+
+//   console.log('SELECTED USER=', user);
+//   if (!user) {
+//     return res.status(404).json({ message: 'User not found' });
+//   }
+
+//   // Проверка уникальности номера телефона
+//   const userWithPhone = await User.findOne({ where: { phone } });
+//   if (userWithPhone && userWithPhone.id !== user.id) {
+//     return res.status(400).json({ message: 'Номер телефона уже используется другим пользователем' });
+//   }
+
+//   user.password = password;
+//   user.phone = phone;
+//   user.name = name;
+//   user.lastname = lastname;
+//   user.areasofactivity=areasofactivity;
+
+//   await user.save();
+
+//   res.status(200).send(user);
+// };
 const addFullProfile = async (req, res) => {
   console.log('111 AddFullProfile Started', req.body);
 
-  const { password, phone, name, lastname ,areasofactivity} = req.body;
+  const { password, phone, name, lastname, areasofactivity } = req.body;
 
-  console.log('AddFullProfile Started', password, phone, name, lastname,areasofactivity);
+  console.log('AddFullProfile Started', password, phone, name, lastname, areasofactivity);
 
-  // if (!phone || !/^\d{10}$/.test(phone)) {
-  //   return res.status(400).json({ message: 'Некорректный номер телефона. Номер должен содержать 10 цифр.' });
-  // }
+  // Validate required fields
+  if (!phone || !/^\+\d{10,15}$/.test(phone)) {
+    return res.status(400).json({ message: 'Некорректный номер телефона. Номер должен содержать от 10 до 15 цифр и начинаться с +.' });
+  }
 
   const authHeader = req.headers['authorization'];
 
@@ -749,19 +804,22 @@ const addFullProfile = async (req, res) => {
     return res.status(401).json({ message: 'Authorization header is missing' });
   }
 
-  // Check if the header starts with "Bearer "
   if (!authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Invalid token format' });
   }
 
-  // Extract the token (remove "Bearer " from the header)
   const token = authHeader.substring(7);
   console.log('token =', token);
-  // Now you have the JWT token in the 'token' variable
-  // console.log('JWT Token:', token);
 
-  const decodedToken = jwt.decode(token);
-  console.log('Айди юзера который соответствует данному токену', decodedToken);
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Use verify instead of decode for security
+  } catch (error) {
+    console.error('JWT verification error:', error);
+    return res.status(401).json({ message: 'Invalid or expired token' });
+  }
+
+  console.log('Decoded token:', decodedToken);
 
   let user = await User.findOne({ where: { email: decodedToken.email } });
 
@@ -770,23 +828,35 @@ const addFullProfile = async (req, res) => {
     return res.status(404).json({ message: 'User not found' });
   }
 
-  // Проверка уникальности номера телефона
-  const userWithPhone = await User.findOne({ where: { phone } });
-  if (userWithPhone && userWithPhone.id !== user.id) {
+  // Check for unique phone number
+  const userWithPhone = await User.findOne({ where: { phone, id: { [Op.ne]: user.id } } });
+  if (userWithPhone) {
     return res.status(400).json({ message: 'Номер телефона уже используется другим пользователем' });
   }
 
-  user.password = password;
-  user.phone = phone;
-  user.name = name;
-  user.lastname = lastname;
-  user.areasofactivity=areasofactivity;
+  // Update fields only if provided
+  if (password) {
+    if (typeof password !== 'string' || password.length < 6) {
+      return res.status(400).json({ message: 'Пароль должен быть строкой длиной не менее 6 символов' });
+    }
+    user.password = password;
+  }
+  user.phone = phone || user.phone;
+  user.name = name || user.name;
+  user.lastname = lastname || user.lastname;
+  user.areasofactivity = areasofactivity || user.areasofactivity;
 
-  await user.save();
+  try {
+    await user.save();
+  } catch (error) {
+    console.error('Error saving user:', error);
+    return res.status(500).json({ message: 'Ошибка при сохранении профиля' });
+  }
 
-  res.status(200).send(user);
+  // Exclude password from response
+  const { password: _, ...userWithoutPassword } = user.toJSON();
+  res.status(200).json(userWithoutPassword);
 };
-
 
 const signUp = async (req, res) =>{
     try {

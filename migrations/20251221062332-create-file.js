@@ -44,6 +44,11 @@ module.exports = {
         references: { model: "TraditionalGifts", key: "id" },
         allowNull: true,
       },
+      jewelry_id: {
+        type: Sequelize.INTEGER, // Предполагаем INTEGER
+        references: { model: "TraditionalGifts", key: "id" },
+        allowNull: true,
+      },
       flowers_id: {
         type: Sequelize.INTEGER, // Предполагаем INTEGER
         references: { model: "Flowers", key: "id" },
