@@ -138,14 +138,15 @@ const getAllWeddings = async (req, res) => {
 
 // Получение одной свадьбы (Read - Single)
 const getWedding = async (req, res) => {
-  console.log('getWedding started',Wedding)
+ 
   const { id } = req.params;
-
+  
   try {
     const wedding = await Wedding.findByPk(id, {
       include: [WeddingItem],
     });
 
+    console.log('getWedding started',wedding)
     if (!wedding) {
       return res.status(404).json({ success: false, error: 'Свадьба не найдена' });
     }
@@ -156,6 +157,7 @@ const getWedding = async (req, res) => {
     }
 
     res.status(200).json({ success: true, data: wedding });
+
   } catch (error) {
     console.error('Ошибка при получении свадьбы:', error);
     res.status(500).json({ success: false, error: 'Ошибка сервера' });

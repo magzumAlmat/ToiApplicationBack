@@ -40,4 +40,11 @@ const Wedding = sequelize.define('Wedding', {
   timestamps: false, // Автоматические createdAt и updatedAt
 });
 
+Wedding.associate = function(models) {
+  Wedding.belongsTo(models.User, { foreignKey: 'host_id' });
+  Wedding.hasMany(models.WeddingItem, { foreignKey: 'wedding_id', onDelete: 'CASCADE' });
+  Wedding.hasMany(models.Wishlist, { foreignKey: 'wedding_id', onDelete: 'CASCADE' });
+};
+
+
 module.exports = Wedding;

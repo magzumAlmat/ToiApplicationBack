@@ -10,7 +10,7 @@ const authenticate = (req, res, next) => {
 router.post('/weddings/addwedding', passport.authenticate('jwt', {session: false}),authenticate, weddingController.createWedding);
 router.get('/getallweddings', passport.authenticate('jwt', {session: false}),authenticate, weddingController.getAllWeddings);
 
-router.get('/weddings/:id', weddingController.getWedding);
+router.get('/weddings/:id', passport.authenticate('jwt', {session: false}),authenticate, weddingController.getWedding);
 router.put('/updateweddingbyid/:id', passport.authenticate('jwt', { session: false }), authenticate,weddingController.updateWedding);
 router.delete('/weddings/:id', passport.authenticate('jwt', {session: false}),authenticate, weddingController.deleteWedding);
 
