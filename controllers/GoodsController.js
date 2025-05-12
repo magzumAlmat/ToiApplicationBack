@@ -35,11 +35,13 @@ exports.getAllGoods = async (req, res) => {
 
 
 exports.getGoodById = async (req, res) => {
+
   const { id } = req.params;
   try {
       const goods = await Goods.findByPk(id);
       if (!goods) return res.status(404).json({ message: 'Товары не найдены' });
       res.status(200).json(goods);
+      console.log('getGoodById  стартовал',goods)
   } catch (error) {
       res.status(500).json({ error: error.message });
   }

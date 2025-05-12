@@ -443,9 +443,9 @@ const aUTH=async(req,res)=>{
       user.email,
       "Подтверждение регистрации",
       `<div style="font-family: Arial, sans-serif; padding: 20px;">
-      <h2 style="color: #1976d2;">Подтверждение регистрации</h2>
-      // <p>Спасибо за регистрацию! Для подтверждения вашего email перейдите по ссылке ниже:</p>
-      // <a href="${verificationLink}" style="display: inline-block; padding: 10px 20px; background-color: #1976d2; color: white; text-decoration: none; border-radius: 5px;">Подтвердить email</a>
+      <h2 style="color: #1976d2;">Ваш аккаунт подтвержден </h2>
+     
+     
       <p style="color: #555;">Если вы не регистрировались, проигнорируйте это письмо.</p>
     </div>`
     );

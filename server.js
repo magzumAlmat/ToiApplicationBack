@@ -361,29 +361,29 @@ app.get("/api/weddingwishes/:weddingId", async (req, res) => {
           <h2>Список подарков</h2>
           <ul>
             ${wishlist
-              .map(
-                item => `
-                  <li>
-                    ${item.item_name} - ${item.is_reserved ? 'Зарезервировано' : 'Свободно'}
-                    ${
-                      item.is_reserved
-                        ? ` (${item.reserved_by_unknown || (item.Reserver ? item.Reserver.username : 'Кем-то')})`
-                        : `
-                          <form action="/api/weddinginvitation/${item.id}/reserve" method="POST">
-                            <input type="text" name="name" placeholder="Ваше имя" required />
-                            <button type="submit">Зарезервировать</button>
-                          </form>
-                        `
-                    }
-                    ${
-                      item.good_id
-                        ? `<a href="/api/goods/${item.good_id}"><button class="details-btn">Детали</button></a>`
-                        : ''
-                    }
-                  </li>
-                `
-              )
-              .join('')}
+            .map(
+              item => `
+                <li>
+                  ${item.item_name} - ${item.is_reserved ? 'Зарезервировано' : 'Свободно'}
+                  ${
+                    item.is_reserved
+                      ? ` (${item.reserved_by_unknown || (item.Reserver ? item.Reserver.username : 'Кем-то')})`
+                      : `
+                        <form action="/api/weddingwishes/${item.id}/reserve" method="POST">
+                          <input type="text" name="name" placeholder="Ваше имя" required />
+                          <button type="submit">Зарезервировать</button>
+                        </form>
+                      `
+                  }
+                  ${
+                    item.good_id
+                      ? `<a href="/api/goods/${item.good_id}"><button class="details-btn">Детали</button></a>`
+                      : ''
+                  }
+                </li>
+              `
+            )
+            .join('')}
           </ul>
           <p class="footer-link">Если у вас есть приложение, то можете пройти по <a href='${applink}'>ссылке</a></p>
         </div>
@@ -395,6 +395,86 @@ app.get("/api/weddingwishes/:weddingId", async (req, res) => {
     res.status(500).send("Ошибка при загрузке приглашения");
   }
 });
+
+
+
+app.get("/api/weddingwishes/:weddingId", async (req, res) => {
+  console.log("Запрос на /api/weddingwishes/:weddingId стартовал", req.params);
+  const { weddingId } = req.params;
+  const applink = `exp://172.20.10.7:8081/--/wishlist/${weddingId}`;
+
+  console.log('applink', applink);
+  try {
+    const wedding = await Wedding.findByPk(weddingId);
+    if (!wedding) {
+      console.log(`Свадьба с ID ${weddingId} не найдена`);
+      return res.status(404).send("Свадьба не найдена");
+    }
+    const wishlist = await Wishlist.findAll({
+      where: { wedding_id: weddingId },
+      include: [{ model: User, as: 'Reserver', attributes: ['username'] }], // Предполагается связь с пользователем
+    });
+    console.log("Данные свадьбы:", wedding.name, "Wishlist:", wishlist.length);
+
+    res.set("Content-Type", "text/html; charset=utf-8");
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="ru">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${wedding.name}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          ul { list-style-type: none; padding: 0; }
+          li { margin: 10px 0; display: flex; align-items: center; gap: 10px; }
+          button { padding: 5px 10px; background-color: #007BFF; color: white; border: none; cursor: pointer; }
+          button:disabled { background-color: #ccc; cursor: not-allowed; }
+          .details-btn { background-color: #28A745; }
+          form { display: inline; margin: 0; }
+          input[type="text"] { padding: 5px; }
+        </style>
+      </head>
+      <body>
+        <h1>${wedding.name}</h1>
+        <p>Дата: ${wedding.date}</p>
+        <h2>Список подарков</h2>
+        <ul>
+          ${wishlist
+            .map(
+              item => `
+                <li>
+                  ${item.item_name} - ${item.is_reserved ? 'Зарезервировано' : 'Свободно'}
+                  ${
+                    item.is_reserved
+                      ? ` (${item.reserved_by_unknown || (item.Reserver ? item.Reserver.username : 'Кем-то')})`
+                      : `
+                        <form action="/api/weddingwishes/${item.id}/reserve" method="POST">
+                          <input type="text" name="name" placeholder="Ваше имя" required />
+                          <button type="submit">Зарезервировать</button>
+                        </form>
+                      `
+                  }
+                  ${
+                    item.good_id
+                      ? `<a href="/api/goods/${item.good_id}"><button class="details-btn">Детали</button></a>`
+                      : ''
+                  }
+                </li>
+              `
+            )
+            .join('')}
+        </ul>
+        <h4>Если у вас есть приложение, то можете пройти по ссылке <a href='${applink}'>${applink}</a></h4>
+      </body>
+      </html>
+    `);
+  } catch (error) {
+    console.error("Ошибка при загрузке свадьбы:", error);
+    res.status(500).send("Ошибка при загрузке свадьбы");
+  }
+});
+
 
 app.get("/api/goods/:goodId", async (req, res) => {
   console.log("Запрос на /api/goods/:goodId стартовал", req.params);
