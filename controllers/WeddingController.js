@@ -170,10 +170,14 @@ const getWedding = async (req, res) => {
 // Обновление свадьбы (Update)
 const updateWedding = async (req, res) => {
   
+
   const { id } = req.params;
+  const {data}=req.params;
   const { name, date } = req.body;
 
+
   console.log('updateWedding  started',id,name,date)
+  console.log('updateWedding req.body',req.body,'data= ',data)
   try {
     const wedding = await Wedding.findByPk(id);
     if (!wedding) {

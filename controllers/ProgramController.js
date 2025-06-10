@@ -13,6 +13,7 @@ exports.createProgram = async (req, res) => {
 exports.getAllPrograms = async (req, res) => {
     try {
         const programs = await Program.findAll();
+        console.log('Program= ',programs)
         res.status(200).json(programs);
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -105,23 +105,87 @@ const createWishlistItem = async (req, res) => {
 };
 
 // Получение списка желаний для свадьбы (Read - List)
-const getWishlistByWedding = async (req, res) => {
+// const getWishlistByWedding = async (req, res) => {
 
+//   const { weddingId } = req.params;
+//   console.log('GET WHISHLIST BY ID started wedding id= ',weddingId)
+//   try {
+
+   
+//     const wishlistItems = await Wishlist.findAll({
+//       where: { wedding_id: weddingId },
+//       include: [
+//         { model: User, as: 'Reserver', attributes: ['id', 'username'] }, // Информация о том, кто зарезервировал
+//       ],
+//     });
+//     const goodItem=await Goods.findByPk(goodItem.good_id)
+
+//     console.log('this is good by id= ',goodItem)
+
+//     if (!wishlistItems.length) {
+//       return res.status(200).json({ success: true, data: [], message: 'Список желаний пуст' });
+//     }
+
+//     console.log('finded wishlist',wishlistItems)
+//     res.status(200).json({ success: true, data: wishlistItems });
+//   } catch (error) {
+//     console.error('Ошибка при получении списка желаний:', error);
+//     res.status(500).json({ success: false, error: 'Ошибка сервера' });
+//   }
+// };
+
+const getWishlistByWedding = async (req, res) => {
   const { weddingId } = req.params;
-  console.log('GET WHISHLIST BY ID started wedding id= ',weddingId)
+  console.log('GET WHISHLIST BY ID started wedding id=', weddingId);
+
   try {
     const wishlistItems = await Wishlist.findAll({
       where: { wedding_id: weddingId },
       include: [
-        { model: User, as: 'Reserver', attributes: ['id', 'username'] }, // Информация о том, кто зарезервировал
+        {
+          model: User,
+          as: 'Reserver',
+          attributes: ['id', 'username'],
+        },
+        {
+          model: Goods,
+          as: 'Good', // Предполагается, что в модели Wishlist определена ассоциация с Goods
+          attributes: ['id', 'item_name', 'category', 'cost', 'description', 'specs'],
+        },
       ],
     });
 
     if (!wishlistItems.length) {
-      return res.status(200).json({ success: true, data: [], message: 'Список желаний пуст' });
+      return res.status(200).json({
+        success: true,
+        data: [],
+        message: 'Список желаний пуст',
+      });
     }
 
-    res.status(200).json({ success: true, data: wishlistItems });
+    // Форматирование данных для фронтенда
+    const formattedItems = wishlistItems.map((item) => {
+      const itemData = {
+        id: item.id,
+        wedding_id: item.wedding_id,
+        item_name: item.good_id ? item.Good?.item_name : item.item_name,
+        category: item.good_id ? item.Good?.category : null,
+        cost: item.good_id ? item.Good?.cost : null,
+        description: item.good_id ? item.Good?.description : item.description,
+        specs: item.good_id ? item.Good?.specs : null,
+       
+        is_reserved: item.is_reserved,
+        reserved_by: item.reserved_by,
+        reserved_by_unknown: item.reserved_by_unknown,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        Reserver: item.Reserver,
+      };
+      return itemData;
+    });
+
+    console.log('finded wishlist', formattedItems);
+    res.status(200).json({ success: true, data: formattedItems });
   } catch (error) {
     console.error('Ошибка при получении списка желаний:', error);
     res.status(500).json({ success: false, error: 'Ошибка сервера' });
