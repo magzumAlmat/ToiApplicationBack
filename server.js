@@ -573,8 +573,8 @@ const superRouter = require("./routes/superRouter");
 app.use("/api", superRouter);
 
 // Новые маршруты
-const technicalEquipmentRentalRouter = require("./routes/technicalEquipmentRentalRouter");
-app.use("/api", technicalEquipmentRentalRouter);
+// const technicalEquipmentRentalRouter = require("./routes/technicalEquipmentRentalRouter");
+// app.use("/api", technicalEquipmentRentalRouter);
 
 const typographyRouter = require("./routes/typographyRouter");
 app.use("/api", typographyRouter);
@@ -592,14 +592,14 @@ app.use('/api/', wishlistRoutes);
 
 
 // Новые маршруты
-const technicalEquipmentRentalRouter = require("./routes/technicalEquipmentRentalRouter");
+technicalEquipmentRentalRouter = require("./routes/technicalEquipmentRentalRouter");
 app.use("/api", technicalEquipmentRentalRouter);
 
-const typographyRouter = require("./routes/typographyRouter");
-app.use("/api", typographyRouter);
+// const typographyRouter = require("./routes/typographyRouter");
+// app.use("/api", typographyRouter);
 
-const hotelRouter = require("./routes/hotelRouter");
-app.use("/api", hotelRouter);
+// const hotelRouter = require("./routes/hotelRouter");
+// app.use("/api", hotelRouter);
 
 
 
