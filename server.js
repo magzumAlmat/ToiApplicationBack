@@ -571,6 +571,19 @@ app.use('/api/', weddingItemRoutes);
 app.use('/api/', wishlistRoutes);
 
 
+// Новые маршруты
+const technicalEquipmentRentalRouter = require("./routes/technicalEquipmentRentalRouter");
+app.use("/api", technicalEquipmentRentalRouter);
+
+const typographyRouter = require("./routes/typographyRouter");
+app.use("/api", typographyRouter);
+
+const hotelRouter = require("./routes/hotelRouter");
+app.use("/api", hotelRouter);
+
+
+
+
 // Настройка Multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
