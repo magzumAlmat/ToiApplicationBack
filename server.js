@@ -156,6 +156,8 @@ const businessAvailabilityRoutes = require('./routes/businessAvailabilityRouter'
 app.use('/api', businessAvailabilityRoutes);
 
 
+const SuvenirsRoutes=require('./routes/suvenirsRouter')
+app.use('/api', SuvenirsRoutes);
 
 const goodsRoutes = require('./routes/goodsRouter');
 
@@ -564,6 +566,19 @@ const filesRouter = require("./routes/fileRouter");
 app.use("/api", filesRouter);
 const superRouter = require("./routes/superRouter");
 app.use("/api", superRouter);
+
+// Новые маршруты
+const technicalEquipmentRentalRouter = require("./routes/technicalEquipmentRentalRouter");
+app.use("/api", technicalEquipmentRentalRouter);
+
+const typographyRouter = require("./routes/typographyRouter");
+app.use("/api", typographyRouter);
+
+const hotelRouter = require("./routes/hotelRouter");
+app.use("/api", hotelRouter);
+
+const eventCategoryRouter = require("./routes/eventCategoryRouter");
+app.use("/api", eventCategoryRouter);
 
 
 app.use('/api/', weddingRoutes);

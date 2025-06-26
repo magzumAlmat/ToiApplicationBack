@@ -6,6 +6,20 @@ const sequelize = require('../config/db')
 const Restaurant = require('./Restaurant');
 const BusinessAvailability = require('./BuisnessAvailable');
 const Wedding = require('./Wedding');
+const TechnicalEquipmentRental = require('./TechnicalEquipmentRental');
+const Typography = require('./Typography');
+const Hotel = require('./Hotel');
+const EventCategory = require('./EventCategory');
+const EventService = require('./EventService');
+const Alcohol = require('./Alcohol');
+const Flowers = require('./Flowers');
+const Tamada = require('./Tamada');
+const Program = require('./Program');
+const Transport = require('./Transport');
+const Jewelry = require('./Jewelry');
+const Cakes = require('./Cakes');
+const TraditionalGifts = require('./TraditionalGifts');
+
 // Экспортируем объект с sequelize сразу, чтобы избежать циклической зависимости
 const db = {
   sequelize,
@@ -31,13 +45,32 @@ db.Wishlist.belongsTo(db.Wedding, { foreignKey: 'wedding_id' });
 db.User.hasMany(db.Wishlist, { foreignKey: 'reserved_by', onDelete: 'SET NULL' });
 db.Wishlist.belongsTo(db.User, { foreignKey: 'reserved_by', as: 'Reserver' });
 
-
 Restaurant.hasMany(BusinessAvailability, { foreignKey: 'restaurantId' });
 BusinessAvailability.belongsTo(Restaurant, { foreignKey: 'restaurantId' });
 
-module.exports = {db,Restaurant,
+// Связи для EventCategory и EventService
+EventCategory.hasMany(EventService, { foreignKey: 'eventCategoryId', onDelete: 'CASCADE' });
+EventService.belongsTo(EventCategory, { foreignKey: 'eventCategoryId' });
+
+module.exports = {
+  db,
+  Restaurant,
   BusinessAvailability,
-  Wedding,};
+  Wedding,
+  TechnicalEquipmentRental,
+  Typography,
+  Hotel,
+  EventCategory,
+  EventService,
+  Alcohol,
+  Flowers,
+  Tamada,
+  Program,
+  Transport,
+  Jewelry,
+  Cakes,
+  TraditionalGifts
+};
 
 // Проверка подключения
 (async () => {
