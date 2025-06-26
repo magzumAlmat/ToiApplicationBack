@@ -19,6 +19,7 @@ const Transport = require('./Transport');
 const Jewelry = require('./Jewelry');
 const Cakes = require('./Cakes');
 const TraditionalGifts = require('./TraditionalGifts');
+const Suvenirs = require('./Suvenirs');
 
 // Экспортируем объект с sequelize сразу, чтобы избежать циклической зависимости
 const db = {
@@ -69,7 +70,7 @@ module.exports = {
   Transport,
   Jewelry,
   Cakes,
-  TraditionalGifts
+  TraditionalGifts,Suvenirs
 };
 
 // Проверка подключения

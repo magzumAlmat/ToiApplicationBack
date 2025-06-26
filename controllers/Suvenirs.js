@@ -25,8 +25,10 @@ exports.getSuvenirById = async (req, res) => {
 
 // Создать новый сувенир
 exports.createSuvenir = async (req, res) => {
+    console.log('я внутри создания сувенира!',req.body)
+    const { salonName, address, phone, district, itemName, type,supplier_id,cost} = req.body;
     try {
-        const newSuvenir = await Suvenirs.create(req.body);
+        const newSuvenir = await Suvenirs.create({salonName, address, phone, district, itemName, type,supplier_id,cost});
         res.status(201).json(newSuvenir);
     } catch (error) {
         res.status(400).json({ error: error.message });

@@ -3,12 +3,13 @@ const Typography = require('../models/Typography');
 exports.createTypography = async (req, res) => {
     console.log('create Typography', req.body);
     const { companyName, phone, link } = req.body;
+    const trimmedLink = link?.trim();
     
     try {
         const typography = await Typography.create({
             companyName: companyName,
             phone: phone,
-            link: link
+            link: trimmedLink
         });
 
         res.status(201).json(typography);

@@ -156,8 +156,13 @@ const businessAvailabilityRoutes = require('./routes/businessAvailabilityRouter'
 app.use('/api', businessAvailabilityRoutes);
 
 
+
+
 const SuvenirsRoutes=require('./routes/suvenirsRouter')
-app.use('/api', SuvenirsRoutes);
+app.use('/api/suvenirs', SuvenirsRoutes);
+
+
+
 
 const goodsRoutes = require('./routes/goodsRouter');
 
