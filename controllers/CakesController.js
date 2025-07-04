@@ -1,6 +1,8 @@
 const Cakes = require('../models/Cakes');
 const File =require('../models/File')
+
 exports.createCake = async (req, res) => {
+    
     const {  address, phone, district, cakeType, cost ,supplier_id,name } = req.body;
     try {
         const cake = await Cakes.create({  address, phone, district, cakeType, cost ,supplier_id,name});
@@ -11,6 +13,7 @@ exports.createCake = async (req, res) => {
 };
 
 exports.getAllCakes = async (req, res) => {
+    console.log('Get cakes started')
     try {
         const cakes = await Cakes.findAll();
         res.status(200).json(cakes);

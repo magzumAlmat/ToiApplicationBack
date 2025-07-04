@@ -12,6 +12,20 @@ const {
     removeServiceFromCategory
 } = require('../controllers/EventCategoryController');
 
+
+const { getAllServices ,updateServicesForCategory} = require('../controllers/EventCategoryController');
+
+
+
+router.post('/event-category/:categoryId/services', addServiceToCategory);
+router.put('/event-category/:categoryId/services', updateServicesForCategory);
+
+
+
+
+router.get('/services', getAllServices);
+
+
 // Создать категорию мероприятия
 router.post('/event-category', createEventCategory);
 
