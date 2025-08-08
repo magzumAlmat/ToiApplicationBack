@@ -99,18 +99,18 @@ router.put('/tamada/:id', updateTamada);
 router.delete('/tamada/:id', deleteTamada);
 
 // Роуты для "Программа" (Program)
-router.post('/programs', createProgram);
-router.get('/programs', getAllPrograms);
-router.get('/programs/:id', getProgramById);
-router.put('/programs/:id', updateProgram);
-router.delete('/programs/:id', deleteProgram);
+router.post('/program', createProgram);
+router.get('/program', getAllPrograms);
+router.get('/program/:id', getProgramById);
+router.put('/program/:id', updateProgram);
+router.delete('/program/:id', deleteProgram);
 
 // Роуты для "Традиционные подарки" (TraditionalGifts)
-router.post('/traditional-gifts', createTraditionalGift);
-router.get('/traditional-gifts', getAllTraditionalGifts);
-router.get('/traditional-gifts/:id', getTraditionalGiftById);
-router.put('/traditional-gifts/:id', updateTraditionalGift);
-router.delete('/traditional-gifts/:id', deleteTraditionalGift);
+router.post('/traditional-gift', createTraditionalGift);
+router.get('/traditional-gift', getAllTraditionalGifts);
+router.get('/traditional-gift/:id', getTraditionalGiftById);
+router.put('/traditional-gift/:id', updateTraditionalGift);
+router.delete('/traditional-gift/:id', deleteTraditionalGift);
 
 // Роуты для "Цветы" (Flowers)
 router.post('/flowers', createFlowers);
@@ -121,8 +121,8 @@ router.delete('/flowers/:id', deleteFlowers);
 
 // Роуты для "Торты" (Cakes)
 router.post('/cakes', createCake);
-router.get('/cakes', getAllCakes);
-router.get('/cakes/:id', getCakeById);
+router.get('/cake', getAllCakes);
+router.get('/cake/:id', getCakeById);
 router.put('/cakes/:id', updateCake);
 router.delete('/cakes/:id', deleteCake);
 

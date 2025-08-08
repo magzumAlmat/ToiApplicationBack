@@ -20,11 +20,14 @@ exports.getAllTamada = async (req, res) => {
 };
 
 exports.getTamadaById = async (req, res) => {
+    
     const { id } = req.params;
+    console.log('get Tamaba by id= ',id )
     try {
         const tamada = await Tamada.findByPk(id);
         if (!tamada) return res.status(404).json({ message: 'Тамада не найден' });
         res.status(200).json(tamada);
+        console.log('ответ= ',tamada)
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
