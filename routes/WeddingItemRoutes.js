@@ -8,7 +8,7 @@ const authenticate = (req, res, next) => {
   next();
 };
 
-router.post('/wedding-items', weddingItemController.createWeddingItem);
+router.post('/wedding-items', passport.authenticate('jwt', {session: false}),authenticate, weddingItemController.createWeddingItem);
 
 router.get('/wedding-items/:weddingId',passport.authenticate('jwt', {session: false}),authenticate, weddingItemController.getWeddingItems);
 router.put('/wedding-items/:id',passport.authenticate('jwt', {session: false}),authenticate, weddingItemController.updateWeddingItem);

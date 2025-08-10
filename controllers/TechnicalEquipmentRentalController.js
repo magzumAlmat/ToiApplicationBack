@@ -1,21 +1,6 @@
 const TechnicalEquipmentRental = require('../models/TechnicalEquipmentRental');
 
-// exports.createTechnicalEquipmentRental = async (req, res) => {
-//     console.log('create TechnicalEquipmentRental', req.body);
-//     const { companyName, phone, link } = req.body;
-    
-//     try {
-//         const technicalEquipmentRental = await TechnicalEquipmentRental.create({
-//             companyName: companyName,
-//             phone: phone,
-//             link: link
-//         });
 
-//         res.status(201).json(technicalEquipmentRental);
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// };
 
 
 exports.createTechnicalEquipmentRental = async (req, res) => {

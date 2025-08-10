@@ -3,12 +3,17 @@ const Hotel = require('../models/Hotel');
 exports.createHotel = async (req, res) => {
     console.log('create Hotel', req.body);
     const { name, address, averageCheck, phone, link } = req.body;
+
+    const checkValue = Number(averageCheck);
+    if (isNaN(checkValue)) {
+        return res.status(400).json({ error: 'averageCheck должен быть числом.' });
+    }
     
     try {
         const hotel = await Hotel.create({
             name: name,
             address: address,
-            averageCheck: Number(averageCheck),
+            averageCheck: checkValue,
             phone: phone,
             link: link
         });
@@ -56,6 +61,11 @@ exports.updateHotel = async (req, res) => {
         return res.status(400).json({ message: 'Обязательные поля: name, address, averageCheck, phone' });
     }
 
+    const checkValue = Number(averageCheck);
+    if (isNaN(checkValue)) {
+        return res.status(400).json({ error: 'averageCheck должен быть числом.' });
+    }
+
     console.log('ID гостиницы для обновления:', id);
     console.log('Данные для обновления:', req.body);
 
@@ -68,7 +78,7 @@ exports.updateHotel = async (req, res) => {
         await hotel.update({
             name,
             address,
-            averageCheck: Number(averageCheck),
+            averageCheck: checkValue,
             phone,
             link
         });
