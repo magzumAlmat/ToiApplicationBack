@@ -70,7 +70,8 @@ module.exports = {
   Transport,
   Jewelry,
   Cakes,
-  TraditionalGifts,Suvenirs
+  TraditionalGifts,
+  Suvenirs
 };
 
 // Проверка подключения

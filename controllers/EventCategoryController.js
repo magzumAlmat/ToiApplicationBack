@@ -205,6 +205,7 @@ exports.getAllServices = async (req, res) => {
   }
 };
 
+
 exports.createEventCategory = async (req, res) => {
   console.log('create EventCategory', req.body);
   const { name } = req.body;
@@ -230,11 +231,20 @@ exports.getAllEventCategories = async (req, res) => {
         attributes: ['serviceId', 'serviceType']
       }]
     });
+    console.log('1 Забираем все категории мероприятия- ',eventCategories)
     res.status(200).json(eventCategories);
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+
+
+
+
 
 exports.getEventCategoryById = async (req, res) => {
   const { id } = req.params;
@@ -437,8 +447,11 @@ exports.updateEventCategory = async (req, res) => {
   }
 };
 
+
+
 exports.deleteEventCategory = async (req, res) => {
   const { id } = req.params;
+  console.log('deleteEventCategory started    id= ',id)
   try {
     // Сначала удаляем связанные услуги
     await EventService.destroy({ where: { eventCategoryId: id } });
@@ -454,6 +467,10 @@ exports.deleteEventCategory = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+
 
 exports.addServiceToCategory = async (req, res) => {
   const { categoryId } = req.params;
