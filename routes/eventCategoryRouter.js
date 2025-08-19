@@ -9,7 +9,10 @@ const {
     updateEventCategory,
     deleteEventCategory,
     addServiceToCategory,
-    removeServiceFromCategory
+    removeServiceFromCategory,
+    updateTotalCost,
+    updatePaidAmount,
+    updateRemainingBalance
 } = require('../controllers/EventCategoryController');
 
 
@@ -49,6 +52,12 @@ router.post('/event-category/:categoryId/service', addServiceToCategory);
 
 // Удалить услугу из категории
 router.delete('/event-category/:categoryId/service/:serviceId', removeServiceFromCategory);
+
+// Routes for updating individual fields
+router.patch('/event-category/:id/total_cost', updateTotalCost);
+router.patch('/event-category/:id/paid_amount', updatePaidAmount);
+router.patch('/event-category/:id/remaining_balance', updateRemainingBalance);
+
 
 module.exports = router;
 

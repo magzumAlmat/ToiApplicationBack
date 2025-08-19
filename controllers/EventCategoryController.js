@@ -207,14 +207,14 @@ exports.getAllServices = async (req, res) => {
 
 
 exports.createEventCategory = async (req, res) => {
-  console.log('create EventCategory', req.body);
-  const { name } = req.body;
-  
+  const { name, total_cost, paid_amount, remaining_balance } = req.body;
   try {
     const eventCategory = await EventCategory.create({
-      name: name
+      name,
+      total_cost: total_cost || 0,
+      paid_amount: paid_amount || 0,
+      remaining_balance: remaining_balance || 0,
     });
-
     res.status(201).json(eventCategory);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -417,32 +417,24 @@ exports.getEventCategoryWithServices = async (req, res) => {
 
 exports.updateEventCategory = async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
-
-  if (!name) {
-    return res.status(400).json({ message: 'Обязательное поле: name' });
-  }
-
-  console.log('ID категории мероприятия для обновления:', id);
-  console.log('Данные для обновления:', req.body);
-
+  const { name, total_cost, paid_amount, remaining_balance } = req.body;
   try {
     const eventCategory = await EventCategory.findByPk(id);
     if (!eventCategory) {
       return res.status(404).json({ message: 'Категория мероприятия с указанным ID не найдена' });
     }
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (total_cost !== undefined) updateData.total_cost = total_cost;
+    if (paid_amount !== undefined) updateData.paid_amount = paid_amount;
+    if (remaining_balance !== undefined) updateData.remaining_balance = remaining_balance;
 
-    await eventCategory.update({
-      name
-    });
-
-    console.log('Обновлённая категория мероприятия:', eventCategory);
+    await eventCategory.update(updateData);
     res.status(200).json({
       message: 'Категория мероприятия успешно обновлена',
       eventCategory: eventCategory,
     });
   } catch (error) {
-    console.error('Ошибка при обновлении категории мероприятия:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -535,6 +527,87 @@ exports.removeServiceFromCategory = async (req, res) => {
     res.status(404).json({ error: 'Связь между категорией и услугой не найдена' });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+exports.updateTotalCost = async (req, res) => {
+  const { id } = req.params;
+  const { total_cost } = req.body;
+
+  if (total_cost === undefined) {
+    return res.status(400).json({ success: false, error: 'Поле total_cost обязательно' });
+  }
+
+  try {
+    const eventCategory = await EventCategory.findByPk(id);
+    if (!eventCategory) {
+      return res.status(404).json({ success: false, error: 'Категория мероприятия не найдена' });
+    }
+
+    await eventCategory.update({ total_cost });
+
+    res.status(200).json({
+      success: true,
+      data: eventCategory,
+      message: 'Общая сумма обновлена',
+    });
+  } catch (error) {
+    console.error('Ошибка при обновлении общей суммы:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+exports.updatePaidAmount = async (req, res) => {
+  const { id } = req.params;
+  const { paid_amount } = req.body;
+
+  if (paid_amount === undefined) {
+    return res.status(400).json({ success: false, error: 'Поле paid_amount обязательно' });
+  }
+
+  try {
+    const eventCategory = await EventCategory.findByPk(id);
+    if (!eventCategory) {
+      return res.status(404).json({ success: false, error: 'Категория мероприятия не найдена' });
+    }
+
+    await eventCategory.update({ paid_amount });
+
+    res.status(200).json({
+      success: true,
+      data: eventCategory,
+      message: 'Потраченная сумма обновлена',
+    });
+  } catch (error) {
+    console.error('Ошибка при обновлении потраченной суммы:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+exports.updateRemainingBalance = async (req, res) => {
+  const { id } = req.params;
+  const { remaining_balance } = req.body;
+
+  if (remaining_balance === undefined) {
+    return res.status(400).json({ success: false, error: 'Поле remaining_balance обязательно' });
+  }
+
+  try {
+    const eventCategory = await EventCategory.findByPk(id);
+    if (!eventCategory) {
+      return res.status(404).json({ success: false, error: 'Категория мероприятия не найдена' });
+    }
+
+    await eventCategory.update({ remaining_balance });
+
+    res.status(200).json({
+      success: true,
+      data: eventCategory,
+      message: 'Остаток обновлен',
+    });
+  } catch (error) {
+    console.error('Ошибка при обновлении остатка:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
   }
 };
 

@@ -25,6 +25,21 @@ const Wedding = sequelize.define('Wedding', {
       key: 'id',
     },
   },
+  total_cost: {
+    type: DataTypes.DECIMAL(15, 2),
+    allowNull: false,
+    defaultValue: 0.00,
+  },
+  paid_amount: {
+    type: DataTypes.DECIMAL(15, 2),
+    allowNull: false,
+    defaultValue: 0.00,
+  },
+  remaining_balance: {
+    type: DataTypes.DECIMAL(15, 2),
+    allowNull: false,
+    defaultValue: 0.00,
+  },
   created_at: {
     type: DataTypes.DATE,
     allowNull: false,

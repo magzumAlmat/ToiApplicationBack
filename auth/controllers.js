@@ -504,7 +504,7 @@ const logIn=async(req,res)=>{
     }
     // Генерация JWT-токена
     const payload = { id: user.id, email: user.email };
-    const token = jwt.sign(payload, jwtOptions.secretOrKey, { expiresIn: '1h' }); // Токен действителен 1 час
+    const token = jwt.sign(payload, jwtOptions.secretOrKey, { expiresIn: '1y' }); // Токен действителен 1 час
     console.log('Это токен- ',token)
     return res.status(200).json({ message: 'Успешный вход', token });
   })(req, res);

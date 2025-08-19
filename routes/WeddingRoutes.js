@@ -14,4 +14,10 @@ router.get('/weddings/:id', passport.authenticate('jwt', {session: false}),authe
 router.put('/updateweddingbyid/:id', passport.authenticate('jwt', { session: false }), authenticate,weddingController.updateWedding);
 router.delete('/weddings/:id', passport.authenticate('jwt', {session: false}),authenticate, weddingController.deleteWedding);
 
+// Routes for updating individual fields
+router.patch('/weddings/:id/total_cost', passport.authenticate('jwt', {session: false}),authenticate, weddingController.updateTotalCost);
+router.patch('/weddings/:id/paid_amount', passport.authenticate('jwt', {session: false}),authenticate, weddingController.updatePaidAmount);
+router.patch('/weddings/:id/remaining_balance', passport.authenticate('jwt', {session: false}),authenticate, weddingController.updateRemainingBalance);
+
+
 module.exports = router;
