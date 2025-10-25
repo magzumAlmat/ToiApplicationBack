@@ -68,4 +68,7 @@ transport
 
 
 
-создание тунеля  ngrok http http://localhost:6666
+создание тунеля 
+1 backend          npm run dev
+2 backend           ngrok http http://localhost:3000.   
+3 frontend           npx expo start --tunnel

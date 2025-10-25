@@ -98,11 +98,13 @@ const File = sequelize.define("File", {
   jewelry_id :{
     type: DataTypes.INTEGER,
     references: {
-      model: "jewelrys",
+      model: "Jewelry",
       key: "id",
     },
     allowNull: true,
   },
+
+
   transport_id: {
     type: DataTypes.INTEGER,
     references: {

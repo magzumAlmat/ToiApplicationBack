@@ -15,11 +15,29 @@ const storage = multer.diskStorage({
 
 // File filter (optional, for restricting file types)
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"];
-  if (allowedTypes.includes(file.mimetype)) {
+  const isVideo = file.mimetype.startsWith("video/");
+  const allowedTypes = [
+    // Документы
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
+    "application/msword", // DOC
+    "application/pdf", // PDF
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation", // PPTX
+
+    // Изображения
+    "image/jpeg", // JPEG
+    "image/png", // PNG
+    "image/heif", // HEIF
+    "image/heic", // HEIC
+  ];
+
+  if (isVideo || allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Invalid file type. Only Word files are allowed."));
+    cb(
+      new Error(
+        "Invalid file type. Only documents, images, and video files are allowed."
+      )
+    );
   }
 };
 

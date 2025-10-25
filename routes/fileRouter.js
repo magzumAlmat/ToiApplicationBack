@@ -8,7 +8,14 @@ const File= require('../models/File')
 const router = express.Router();
 
 // Create
-router.post("/upload/:fileId", upload.single("file"), FileController.updateFile);
+// router.post("/upload/:fileId", upload.single("file"), FileController.updateFile);
+
+
+
+
+router.post("/:entityType/:entityId/files", upload.single("file"), FileController.createFile);
+
+
 
 // Read All
 // router.get("/files", listFiles);

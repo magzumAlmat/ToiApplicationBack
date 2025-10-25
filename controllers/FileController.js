@@ -1,4 +1,4 @@
-const File  = require("../models/File");
+const File = require("../models/File");
 const fs = require("fs").promises;
 const path = require("path");
 
@@ -30,6 +30,8 @@ class FileController {
         mimetype: req.file.mimetype,
       };
 
+      console.log('FD= ',fileData)
+
       // Привязываем файл к сущности
       switch (entityType.toLowerCase()) {
         case "restaurant":
@@ -59,6 +61,10 @@ class FileController {
         case "transport":
           fileData.transport_id = entityId;
           break;
+        case "jewelry":
+          fileData.jewelry_id = entityId;
+          break;
+
         default:
           await fs.unlink(newFilePath);
           return res.status(400).json({ message: "Invalid entity type." });
@@ -124,7 +130,10 @@ class FileController {
         case "goods":
           whereClause = { goods_id: entityId };
           break;
-            
+        case "jewelry":
+          whereClause = { jewelry_id: entityId };
+          break;
+
         default:
           return res.status(400).json({ message: "Invalid entity type." });
       }
@@ -172,9 +181,12 @@ class FileController {
         case "transport":
           whereClause.transport_id = entityId;
           break;
-          case "goods":
-            whereClause.goods_id= entityId ;
-            break;
+        case "goods":
+          whereClause.goods_id = entityId;
+          break;
+        case "jewelry":
+          whereClause.jewelry_id = entityId;
+          break;
         default:
           return res.status(400).json({ message: "Invalid entity type." });
       }
@@ -316,6 +328,21 @@ class FileController {
             file.cake_id = null;
             file.alcohol_id = null;
             break;
+
+
+
+          case "jewelry":
+            file.jewelry_id = entityId;
+            file.restaurant_id = null;
+            file.clothing_id = null;
+            file.tamada_id = null;
+            file.program_id = null;
+            file.traditional_gift_id = null;
+            file.flowers_id = null;
+            file.cake_id = null;
+            file.alcohol_id = null;
+            file.transport_id = null;
+            break;
           default:
             return res.status(400).json({ message: "Invalid entity type." });
         }
@@ -352,3 +379,5 @@ class FileController {
 }
 
 module.exports = FileController;
+
+

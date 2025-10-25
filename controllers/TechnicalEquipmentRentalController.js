@@ -5,6 +5,7 @@ const TechnicalEquipmentRental = require('../models/TechnicalEquipmentRental');
 
 exports.createTechnicalEquipmentRental = async (req, res) => {
     const { companyName, phone, link } = req.body;
+    console.log('companyName, phone, link. =. ',   companyName, phone, link)
 
     // Обрезаем пробелы
     const trimmedLink = link?.trim();
