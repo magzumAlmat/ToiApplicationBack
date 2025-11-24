@@ -430,28 +430,53 @@ const login = async (req, res) => {
 };
 
 const aUTH=async(req,res)=>{
-  console.log('Регистрация стартовала',req.body.roleId)
+  console.log('--- [controllers.js] aUTH function started ---');
+  console.log('Request body:', req.body);
+
   const { email, password, phone, name, lastname,roleId } = req.body;
   const username='someUser'
 
+  console.log('--- [controllers.js] User data extracted from body ---');
+  console.log('Email: ' + email + ', Phone: ' + phone + ', Name: ' + name + ', Lastname: ' + lastname + ', RoleID: ' + roleId);
+
   try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email: email } });
+    if (existingUser) {
+      console.log('--- [controllers.js] User with this email already exists ---');
+      return res.status(409).json({ message: 'Пользователь с таким email уже существует.' });
+    }
+
+    console.log('--- [controllers.js] Attempting to create user in database... ---');
     const user = await User.create({ email, password, phone, name, lastname,roleId,username});
+    console.log('--- [controllers.js] User created successfully ---');
+    console.log('Created user object:', user.toJSON());
 
     // Отправка письма для подтверждения
     const verificationLink = `${process.env.BACKEND_URL}/api/auth/verifylink/${user.id}`;
-    await sendEmail(
-      user.email,
-      "Подтверждение регистрации",
-      `<div style="font-family: Arial, sans-serif; padding: 20px;">
+    console.log('--- [controllers.js] Verification link created: ' + verificationLink + ' ---');
+
+    const emailBody = `<div style="font-family: Arial, sans-serif; padding: 20px;">
       <h2 style="color: #1976d2;">Ваш аккаунт подтвержден </h2>
      
      
       <p style="color: #555;">Если вы не регистрировались, проигнорируйте это письмо.</p>
-    </div>`
+    </div>`;
+
+    console.log('--- [controllers.js] Attempting to send verification email... ---');
+    await sendEmail(
+      user.email,
+      "Подтверждение регистрации",
+      emailBody
     );
+    console.log('--- [controllers.js] sendEmail function called (asynchronous) ---');
+
 
     res.status(201).json({ message: 'Пользователь зарегистрирован. Проверьте email для подтверждения.' });
+    console.log('--- [controllers.js] aUTH finished successfully, response sent. ---');
   } catch (error) {
+    console.error('--- [controllers.js] An error occurred in aUTH function ---');
+    console.error('Error details:', error);
     res.status(500).json({ error: error.message });
   }
 }  
