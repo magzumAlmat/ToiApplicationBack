@@ -1,11 +1,60 @@
-version: '3.7'
+# version: '3.7'
+
+# services:
+#   genplan_db:
+#     container_name: Toibuisness_db
+#     ports:
+#       - 5432:5432
+#     environment:
+#       - POSTGRES_PASSWORD=root
+#       - POSTGRES_USER=admin
+#     image: postgres:15.3-alpine
+
+
+
+
+version: '3.8'                  # лучше новую версию
 
 services:
   genplan_db:
     container_name: Toibuisness_db
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_USER=admin
     image: postgres:15.3-alpine
+    ports:
+      - "5432:5432"              # можно оставить, если хочешь подключаться с хоста
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: admin
+      POSTGRES_DB: toibusiness      # ← ОБЯЗАТЕЛЬНО добавь имя базы!
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # чтобы данные не пропадали
+    healthcheck:                  # ← САМОЕ ВАЖНОЕ для твоей ошибки!
+      test: ["CMD-SHELL", "pg_isready -U admin -d toibusiness"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ← ДОБАВЬ СВОЁ ПРИЛОЖЕНИЕ!
+  app:
+    build: .
+    # или image: ... если уже собрано
+    container_name: toi-app
+    restart: unless-stopped
+    depends_on:
+      genplan_db:
+        condition: service_healthy   # ← Ждём, пока БД реально готова
+    environment:
+      # Самый надёжный способ — одна строка
+      DATABASE_URL: postgres://admin:root@genplan_db:5432/toibusiness
+      # или по отдельности:
+      # DB_HOST: genplan_db
+      # DB_PORT: 5432
+      # DB_USER: admin
+      # DB_PASSWORD: root
+      # DB_NAME: toibusiness
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
