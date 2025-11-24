@@ -18,6 +18,34 @@ if (process.env.NODE_ENV==='production'){
             },
         },
 
+        pool: {
+    max: 20,
+    min: 5,
+    acquire: 30000,
+    idle: 10000
+  },
+  dialectOptions: {
+    // Это спасает от 90 % таких ошибок
+    keepAlive: true,
+    // Важно! Проверяет валидность соединения перед использованием
+    validate: true
+  },
+  // И это тоже очень помогает
+  retry: {
+    match: [
+      /SequelizeConnectionError/,
+      /SequelizeConnectionRefusedError/,
+      /SequelizeHostNotFoundError/,
+      /SequelizeHostNotReachableError/,
+      /SequelizeInvalidConnectionError/,
+      /SequelizeConnectionTimedOutError/,
+      /the database system is in recovery mode/
+    ],
+    max: 5
+  },
+
+
+
     })
 }
 else{
@@ -27,6 +55,33 @@ sequelize = new Sequelize({
     host:dbConf.development.host,
     dialect:dbConf.development.dialect,
     password:dbConf.development.password, 
+    pool: {
+    max: 20,
+    min: 5,
+    acquire: 30000,
+    idle: 10000
+  },
+  dialectOptions: {
+    // Это спасает от 90 % таких ошибок
+    keepAlive: true,
+    // Важно! Проверяет валидность соединения перед использованием
+    validate: true
+  },
+  // И это тоже очень помогает
+  retry: {
+    match: [
+      /SequelizeConnectionError/,
+      /SequelizeConnectionRefusedError/,
+      /SequelizeHostNotFoundError/,
+      /SequelizeHostNotReachableError/,
+      /SequelizeInvalidConnectionError/,
+      /SequelizeConnectionTimedOutError/,
+      /the database system is in recovery mode/
+    ],
+    max: 5
+  },
+
+
 })
 }
 sequelize
