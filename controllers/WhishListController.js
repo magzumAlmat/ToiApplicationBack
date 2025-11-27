@@ -1,146 +1,113 @@
-const {  Wedding} = require('../models');
-const Goods=require('../models/Goods')
-const Wishlist= require('../models/Whishlist')
-const User=require('../auth/models/User')
-// Создание нового элемента в списке желаний (Create)
-// const createWishlistItem = async (req, res) => {
-//   console.log('createwishlist started')
-//   const { wedding_id, item_name, description } = req.body;
-//   const userId = req.user?.id; // Предполагается, что userId приходит из middleware аутентификации
-  
-//   // console.log('userid',userId)
-//   if (!wedding_id || !item_name) {
-//     return res.status(400).json({
-//       success: false,
-//       error: 'wedding_id и item_name обязательны',
-//     });
-//   }
+const { Wedding, Goods, Wishlist, User, Courses, Restaurant, Hotel, Program, Stream, Alcohol, Cakes, Clothing, Flowers, Jewelry, TechnicalEquipmentRental, Tamada, TraditionalGifts, Transport, Typography, Suvenirs, EventCategory } = require('../models');
 
-//   try {
-//     // Проверка, что пользователь — хозяин свадьбы
-//     const wedding = await Wedding.findByPk(wedding_id);
-//     if (!wedding) {
-//       return res.status(404).json({ success: false, error: 'Свадьба не найдена' });
-//     }
-//     if (wedding.host_id !== userId) {
-//       return res.status(403).json({ success: false, error: 'Только хозяин свадьбы может добавлять элементы' });
-//     }
+// Map event types to their corresponding models
+const eventModels = {
+    wedding: Wedding,
+    course: Courses,
+    restaurant: Restaurant,
+    hotel: Hotel,
+    program: Program,
+    stream: Stream,
+    alcohol: Alcohol,
+    cake: Cakes, // Assuming 'cake' is the eventType for Cakes
+    clothing: Clothing,
+    flower: Flowers, // Assuming 'flower' for Flowers
+    jewelry: Jewelry,
+    technicalequipmentrental: TechnicalEquipmentRental,
+    tamada: Tamada,
+    traditionalgift: TraditionalGifts,
+    transport: Transport,
+    typography: Typography,
+    souvenir: Suvenirs, // Assuming 'souvenir' for Suvenirs
+    eventcategory: EventCategory // Assuming 'eventcategory' for EventCategory
+    // Add other event types here as needed
+};
 
-//     const wishlistItem = await Wishlist.create({
-//       wedding_id,
-//       item_name,
-//       description,
-//       reserved_by_unknown:''
-//     });
+// Helper to get event model and check for existence
+const getEvent = async (eventType, eventId) => {
+    const Model = eventModels[eventType];
+    if (!Model) {
+        return null; // Event type not supported
+    }
 
-//     res.status(201).json({
-//       success: true,
-//       data: wishlistItem,
-//       message: 'Элемент добавлен в список желаний',
-//     });
-//   } catch (error) {
-//     console.error('Ошибка при создании элемента wishlist:', error);
-//     res.status(500).json({ success: false, error: 'Ошибка сервера' });
-//   }
-// };
-
+    const event = await Model.findByPk(eventId);
+    if (!event) {
+        return null;
+    }
+    return event;
+};
 
 const createWishlistItem = async (req, res) => {
   console.log('createWishlist started');
-  const { wedding_id, good_id, item_name, description } = req.body;
-  const userId = req.user?.id; // Предполагается, что userId приходит из middleware аутентификации
+  const { event_id, event_type, good_id, item_name, description } = req.body;
+  const userId = req.user?.id;
 
-  if (!wedding_id) {
+  if (!event_id || !event_type) {
     return res.status(400).json({
       success: false,
-      error: 'wedding_id обязателен',
+      error: 'event_id and event_type are required',
     });
   }
 
   if (!good_id && !item_name) {
     return res.status(400).json({
       success: false,
-      error: 'Необходимо указать либо good_id, либо item_name',
+      error: 'Either good_id or item_name must be provided',
     });
   }
 
   try {
-    // Проверка, что пользователь — хозяин свадьбы
-    const wedding = await Wedding.findByPk(wedding_id);
-    if (!wedding) {
-      return res.status(404).json({ success: false, error: 'Свадьба не найдена' });
+    const event = await getEvent(event_type, event_id);
+    if (!event) {
+      return res.status(404).json({ success: false, error: 'Event not found' });
     }
-    if (wedding.host_id !== userId) {
-      return res.status(403).json({ success: false, error: 'Только хозяин свадьбы может добавлять элементы' });
-    }
-
-    let wishlistData = { wedding_id, reserved_by_unknown: '' };
-
-    // Если указан good_id, берем данные из таблицы Goods
-    if (good_id) {
-      const good = await Goods.findByPk(good_id);
-      if (!good) {
-        return res.status(404).json({ success: false, error: 'Товар не найден' });
-      }
-      wishlistData.good_id = good_id;
-      wishlistData.item_name = good.item_name;
-      wishlistData.description = good.description || '';
-    } else {
-      // Если good_id не указан, используем переданные item_name и description
-      wishlistData.item_name = item_name;
-      wishlistData.description = description || '';
+    if (event.host_id !== userId) {
+      return res.status(403).json({ success: false, error: 'Only the event host can add items' });
     }
 
-    const wishlistItem = await Wishlist.create(wishlistData);
+    let goodIdToUse = good_id;
+    if (!goodIdToUse) {
+        // If good_id is not provided, create a new Good on the fly.
+        const newGood = await Goods.create({
+            item_name: item_name,
+            description: description || '',
+            category: 'custom', // Default category
+        });
+        goodIdToUse = newGood.id;
+    }
+
+    const good = await Goods.findByPk(goodIdToUse);
+    if (!good) {
+        return res.status(404).json({ success: false, error: 'Good not found' });
+    }
+
+    const wishlistItem = await Wishlist.create({
+        event_id,
+        event_type,
+        good_id: good.id,
+        item_name: good.item_name,
+        description: good.description,
+        reserved_by_unknown: '' 
+    });
 
     res.status(201).json({
       success: true,
       data: wishlistItem,
-      message: 'Элемент добавлен в список желаний',
+      message: 'Item added to wishlist',
     });
   } catch (error) {
-    console.error('Ошибка при создании элемента wishlist:', error);
-    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+    console.error('Error creating wishlist item:', error);
+    res.status(500).json({ success: false, error: 'Server error' });
   }
 };
 
-// Получение списка желаний для свадьбы (Read - List)
-// const getWishlistByWedding = async (req, res) => {
-
-//   const { weddingId } = req.params;
-//   console.log('GET WHISHLIST BY ID started wedding id= ',weddingId)
-//   try {
-
-   
-//     const wishlistItems = await Wishlist.findAll({
-//       where: { wedding_id: weddingId },
-//       include: [
-//         { model: User, as: 'Reserver', attributes: ['id', 'username'] }, // Информация о том, кто зарезервировал
-//       ],
-//     });
-//     const goodItem=await Goods.findByPk(goodItem.good_id)
-
-//     console.log('this is good by id= ',goodItem)
-
-//     if (!wishlistItems.length) {
-//       return res.status(200).json({ success: true, data: [], message: 'Список желаний пуст' });
-//     }
-
-//     console.log('finded wishlist',wishlistItems)
-//     res.status(200).json({ success: true, data: wishlistItems });
-//   } catch (error) {
-//     console.error('Ошибка при получении списка желаний:', error);
-//     res.status(500).json({ success: false, error: 'Ошибка сервера' });
-//   }
-// };
-
-const getWishlistByWedding = async (req, res) => {
-  const { weddingId } = req.params;
-  console.log('GET WHISHLIST BY ID started wedding id=', weddingId);
+const getWishlistByEvent = async (req, res) => {
+  const { eventType, eventId } = req.params;
+  console.log(`GET WISHLIST BY EVENT started eventType=${eventType}, eventId=${eventId}`);
 
   try {
     const wishlistItems = await Wishlist.findAll({
-      where: { wedding_id: weddingId },
+      where: { event_id: eventId, event_type: eventType },
       include: [
         {
           model: User,
@@ -149,7 +116,7 @@ const getWishlistByWedding = async (req, res) => {
         },
         {
           model: Goods,
-          as: 'Good', // Предполагается, что в модели Wishlist определена ассоциация с Goods
+          as: 'Good',
           attributes: ['id', 'item_name', 'category', 'cost', 'description', 'specs'],
         },
       ],
@@ -159,40 +126,35 @@ const getWishlistByWedding = async (req, res) => {
       return res.status(200).json({
         success: true,
         data: [],
-        message: 'Список желаний пуст',
+        message: 'Wishlist is empty',
       });
     }
 
-    // Форматирование данных для фронтенда
-    const formattedItems = wishlistItems.map((item) => {
-      const itemData = {
+    const formattedItems = wishlistItems.map((item) => ({
         id: item.id,
-        wedding_id: item.wedding_id,
+        event_id: item.event_id,
+        event_type: item.event_type,
         item_name: item.good_id ? item.Good?.item_name : item.item_name,
         category: item.good_id ? item.Good?.category : null,
         cost: item.good_id ? item.Good?.cost : null,
         description: item.good_id ? item.Good?.description : item.description,
         specs: item.good_id ? item.Good?.specs : null,
-       
         is_reserved: item.is_reserved,
         reserved_by: item.reserved_by,
         reserved_by_unknown: item.reserved_by_unknown,
         created_at: item.created_at,
         updated_at: item.updated_at,
         Reserver: item.Reserver,
-      };
-      return itemData;
-    });
+      }));
 
-    console.log('finded wishlist', formattedItems);
+    console.log('found wishlist', formattedItems);
     res.status(200).json({ success: true, data: formattedItems });
   } catch (error) {
-    console.error('Ошибка при получении списка желаний:', error);
-    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+    console.error('Error fetching wishlist:', error);
+    res.status(500).json({ success: false, error: 'Server error' });
   }
 };
 
-// Получение одного элемента списка желаний (Read - Single)
 const getWishlistItem = async (req, res) => {
   const { id } = req.params;
 
@@ -202,37 +164,33 @@ const getWishlistItem = async (req, res) => {
     });
 
     if (!wishlistItem) {
-      return res.status(404).json({ success: false, error: 'Элемент не найден' });
+      return res.status(404).json({ success: false, error: 'Item not found' });
     }
 
     res.status(200).json({ success: true, data: wishlistItem });
   } catch (error) {
-    console.error('Ошибка при получении элемента wishlist:', error);
-    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+    console.error('Error fetching wishlist item:', error);
+    res.status(500).json({ success: false, error: 'Server error' });
   }
 };
 
-// Обновление элемента списка желаний (Update - Резервирование подарка)
 const reserveWishlistItem = async (req, res) => {
-  console.log('reserveWishlistItem started')
   const { id } = req.params;
-  const userId = req.user?.id; // ID текущего пользователя из middleware
+  const userId = req.user?.id;
 
-  console.log('reserveWishlistItem     ',req.user?.id)
   try {
     const wishlistItem = await Wishlist.findByPk(id);
     if (!wishlistItem) {
-      return res.status(404).json({ success: false, error: 'Элемент не найден' });
+      return res.status(404).json({ success: false, error: 'Item not found' });
     }
 
     if (wishlistItem.is_reserved) {
-      return res.status(400).json({ success: false, error: 'Этот подарок уже зарезервирован' });
+      return res.status(400).json({ success: false, error: 'This gift is already reserved' });
     }
 
-    // Проверка, что пользователь не является хозяином свадьбы
-    const wedding = await Wedding.findByPk(wishlistItem.wedding_id);
-    if (wedding.host_id === userId) {
-      return res.status(403).json({ success: false, error: 'Хозяин свадьбы не может резервировать подарки' });
+    const event = await getEvent(wishlistItem.event_type, wishlistItem.event_id);
+    if (event && event.host_id === userId) {
+      return res.status(403).json({ success: false, error: 'Event host cannot reserve gifts' });
     }
 
     await wishlistItem.update({
@@ -247,36 +205,37 @@ const reserveWishlistItem = async (req, res) => {
     res.status(200).json({
       success: true,
       data: updatedItem,
-      message: 'Подарок успешно зарезервирован',
+      message: 'Gift reserved successfully',
     });
   } catch (error) {
-    console.error('Ошибка при резервировании подарка:', error);
-    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+    console.error('Error reserving gift:', error);
+    res.status(500).json({ success: false, error: 'Server error' });
   }
 };
 
 
 const reserveWishlistItemByUnknown = async (req, res) => {
-  console.log('reserveWishlistItem started')
   const { id } = req.params;
-  const userId = req.user?.id; // ID текущего пользователя из middleware
-  const data=req.body.data
-  console.log('reserveWishlistItemByUnknown     ',req.body.data.reserved_by_unknown)
-  const unknownUser=req.body.data.reserved_by_unknown
+  const userId = req.user?.id;
+  const unknownUser = req.body.data?.reserved_by_unknown;
+
+  if (!unknownUser) {
+    return res.status(400).json({ success: false, error: 'reserved_by_unknown is required' });
+  }
+  
   try {
     const wishlistItem = await Wishlist.findByPk(id);
     if (!wishlistItem) {
-      return res.status(404).json({ success: false, error: 'Элемент не найден' });
+      return res.status(404).json({ success: false, error: 'Item not found' });
     }
 
     if (wishlistItem.is_reserved) {
-      return res.status(400).json({ success: false, error: 'Этот подарок уже зарезервирован' });
+      return res.status(400).json({ success: false, error: 'This gift is already reserved' });
     }
 
-    // Проверка, что пользователь не является хозяином свадьбы
-    const wedding = await Wedding.findByPk(wishlistItem.wedding_id);
-    if (wedding.host_id === userId) {
-      return res.status(403).json({ success: false, error: 'Хозяин свадьбы не может резервировать подарки' });
+    const event = await getEvent(wishlistItem.event_type, wishlistItem.event_id);
+    if (event && event.host_id === userId) {
+      return res.status(403).json({ success: false, error: 'Event host cannot reserve gifts' });
     }
 
     await wishlistItem.update({
@@ -291,14 +250,14 @@ const reserveWishlistItemByUnknown = async (req, res) => {
     res.status(200).json({
       success: true,
       data: updatedItem,
-      message: 'Подарок успешно зарезервирован',
+      message: 'Gift reserved successfully',
     });
   } catch (error) {
-    console.error('Ошибка при резервировании подарка:', error);
-    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+    console.error('Error reserving gift:', error);
+    res.status(500).json({ success: false, error: 'Server error' });
   }
 };
-// Удаление элемента из списка желаний (Delete)
+
 const deleteWishlistItem = async (req, res) => {
   const { id } = req.params;
   const userId = req.user?.id;
@@ -306,31 +265,31 @@ const deleteWishlistItem = async (req, res) => {
   try {
     const wishlistItem = await Wishlist.findByPk(id);
     if (!wishlistItem) {
-      return res.status(404).json({ success: false, error: 'Элемент не найден' });
+      return res.status(404).json({ success: false, error: 'Item not found' });
     }
 
-    // Проверка, что пользователь — хозяин свадьбы
-    const wedding = await Wedding.findByPk(wishlistItem.wedding_id);
-    if (wedding.host_id !== userId) {
-      return res.status(403).json({ success: false, error: 'Только хозяин свадьбы может удалять элементы' });
+    const event = await getEvent(wishlistItem.event_type, wishlistItem.event_id);
+    if (!event || event.host_id !== userId) {
+      return res.status(403).json({ success: false, error: 'Only the event host can delete items' });
     }
 
     await wishlistItem.destroy();
 
     res.status(200).json({
       success: true,
-      message: 'Элемент удалён из списка желаний',
+      message: 'Item deleted from wishlist',
     });
   } catch (error) {
-    console.error('Ошибка при удалении элемента wishlist:', error);
-    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+    console.error('Error deleting wishlist item:', error);
+    res.status(500).json({ success: false, error: 'Server error' });
   }
 };
 
 module.exports = {
   createWishlistItem,
-  getWishlistByWedding,
+  getWishlistByEvent,
   getWishlistItem,
   reserveWishlistItem,
-  deleteWishlistItem,reserveWishlistItemByUnknown
+  deleteWishlistItem,
+  reserveWishlistItemByUnknown
 };

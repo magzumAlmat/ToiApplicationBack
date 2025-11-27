@@ -74,13 +74,13 @@ const Wishlist = sequelize.define('Wishlist', {
     primaryKey: true,
     autoIncrement: true,
   },
-  wedding_id: {
+  event_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: 'Weddings',
-      key: 'id',
-    },
+  },
+  event_type: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   good_id: {
     type: DataTypes.INTEGER,
@@ -92,11 +92,11 @@ const Wishlist = sequelize.define('Wishlist', {
   },
   item_name: {
     type: DataTypes.STRING(255),
-    allowNull: true, // Опционально, если нужно переопределить имя
+    allowNull: true,
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: true, // Опционально, если нужно переопределить описание
+    allowNull: true,
   },
   is_reserved: {
     type: DataTypes.BOOLEAN,
@@ -130,9 +130,14 @@ const Wishlist = sequelize.define('Wishlist', {
   timestamps: false,
 });
 
-// Устанавливаем связь
+// Define associations
 const Goods = require('./Goods');
-Wishlist.belongsTo(Goods, { foreignKey: 'good_id' });
+const User = require('./User'); // Assuming User model path
+
+Wishlist.belongsTo(Goods, { foreignKey: 'good_id', as: 'Good' });
 Goods.hasMany(Wishlist, { foreignKey: 'good_id' });
+
+Wishlist.belongsTo(User, { foreignKey: 'reserved_by', as: 'Reserver' });
+User.hasMany(Wishlist, { foreignKey: 'reserved_by' });
 
 module.exports = Wishlist;
