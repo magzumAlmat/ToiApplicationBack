@@ -130,14 +130,6 @@ const Wishlist = sequelize.define('Wishlist', {
   timestamps: false,
 });
 
-// Define associations
-const Goods = require('./Goods');
-const User = require('./User'); // Assuming User model path
 
-Wishlist.belongsTo(Goods, { foreignKey: 'good_id', as: 'Good' });
-Goods.hasMany(Wishlist, { foreignKey: 'good_id' });
-
-Wishlist.belongsTo(User, { foreignKey: 'reserved_by', as: 'Reserver' });
-User.hasMany(Wishlist, { foreignKey: 'reserved_by' });
 
 module.exports = Wishlist;

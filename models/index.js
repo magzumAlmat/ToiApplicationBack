@@ -32,6 +32,7 @@ db.User = require('../auth/models/User');
 db.Wedding = require('./Wedding');
 db.WeddingItem = require('./WeddingItem');
 db.Wishlist = require('./Whishlist');
+db.Goods = require('./Goods'); // Add this line
 
 // Определение связей между моделями
 db.User.hasMany(db.Wedding, { foreignKey: 'host_id', onDelete: 'CASCADE' });
@@ -45,6 +46,9 @@ db.Wishlist.belongsTo(db.Wedding, { foreignKey: 'wedding_id' });
 
 db.User.hasMany(db.Wishlist, { foreignKey: 'reserved_by', onDelete: 'SET NULL' });
 db.Wishlist.belongsTo(db.User, { foreignKey: 'reserved_by', as: 'Reserver' });
+
+db.Wishlist.belongsTo(db.Goods, { foreignKey: 'good_id', as: 'Good' }); // Add this line
+db.Goods.hasMany(db.Wishlist, { foreignKey: 'good_id' }); // Add this line
 
 Restaurant.hasMany(BusinessAvailability, { foreignKey: 'restaurantId' });
 BusinessAvailability.belongsTo(Restaurant, { foreignKey: 'restaurantId' });
