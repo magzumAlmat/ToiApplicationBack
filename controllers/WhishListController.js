@@ -61,7 +61,8 @@ const createWishlistItem = async (req, res) => {
     if (!event) {
       return res.status(404).json({ success: false, error: 'Event not found' });
     }
-    if (event.host_id !== userId) {
+    // Check for host_id only if it exists on the event model
+    if (event.host_id && event.host_id !== userId) {
       return res.status(403).json({ success: false, error: 'Only the event host can add items' });
     }
 
@@ -189,7 +190,8 @@ const reserveWishlistItem = async (req, res) => {
     }
 
     const event = await getEvent(wishlistItem.event_type, wishlistItem.event_id);
-    if (event && event.host_id === userId) {
+    // Check for host_id only if it exists on the event model
+    if (event && event.host_id && event.host_id === userId) {
       return res.status(403).json({ success: false, error: 'Event host cannot reserve gifts' });
     }
 
@@ -234,7 +236,8 @@ const reserveWishlistItemByUnknown = async (req, res) => {
     }
 
     const event = await getEvent(wishlistItem.event_type, wishlistItem.event_id);
-    if (event && event.host_id === userId) {
+    // Check for host_id only if it exists on the event model
+    if (event && event.host_id && event.host_id === userId) {
       return res.status(403).json({ success: false, error: 'Event host cannot reserve gifts' });
     }
 
@@ -269,7 +272,8 @@ const deleteWishlistItem = async (req, res) => {
     }
 
     const event = await getEvent(wishlistItem.event_type, wishlistItem.event_id);
-    if (!event || event.host_id !== userId) {
+    // Check for host_id only if it exists on the event model
+    if (!event || (event.host_id && event.host_id !== userId)) {
       return res.status(403).json({ success: false, error: 'Only the event host can delete items' });
     }
 
