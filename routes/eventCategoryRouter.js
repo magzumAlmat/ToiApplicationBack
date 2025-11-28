@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const passport = require('passport');
 const { 
     createEventCategory,
     getAllEventCategories,
@@ -30,8 +30,8 @@ router.get('/services', getAllServices);
 
 
 // Создать категорию мероприятия
-router.post('/event-category', createEventCategory);
 
+router.post('/event-category', passport.authenticate('jwt', {session: false}), createEventCategory);
 // Получить все категории мероприятий
 router.get('/event-categories', getAllEventCategories);
 

@@ -61,9 +61,9 @@ const createWishlistItem = async (req, res) => {
     if (!event) {
       return res.status(404).json({ success: false, error: 'Event not found' });
     }
-    if (event.host_id !== userId) {
-      return res.status(403).json({ success: false, error: 'Only the event host can add items' });
-    }
+  if (event.host_id && event.host_id !== userId) {
+  return res.status(403).json({ success: false, error: 'Only the event host can add items' });
+}
 
     let goodIdToUse = good_id;
     if (!goodIdToUse) {
@@ -81,13 +81,20 @@ const createWishlistItem = async (req, res) => {
         return res.status(404).json({ success: false, error: 'Good not found' });
     }
 
+   console.log('Creating wishlist item:', {
+    event_id,
+    event_type,
+    good_id: good.id,
+    item_name: good.item_name,
+    description: good.description
+});
     const wishlistItem = await Wishlist.create({
         event_id,
         event_type,
         good_id: good.id,
-        item_name: good.item_name,
-        description: good.description,
-        reserved_by_unknown: '' 
+        item_name: good.item_name || '',
+        description: good.description || '',
+        reserved_by_unknown: ''
     });
 
     res.status(201).json({
@@ -95,9 +102,15 @@ const createWishlistItem = async (req, res) => {
       data: wishlistItem,
       message: 'Item added to wishlist',
     });
+
+    
   } catch (error) {
-    console.error('Error creating wishlist item:', error);
-    res.status(500).json({ success: false, error: 'Server error' });
+   console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+    });
+    res.status(500).json({ success: false, error: 'Server error', details: error.message });
   }
 };
 

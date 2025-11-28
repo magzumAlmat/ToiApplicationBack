@@ -206,20 +206,56 @@ exports.getAllServices = async (req, res) => {
 };
 
 
+// exports.createEventCategory = async (req, res) => {
+//   const { name, total_cost, paid_amount, remaining_balance } = req.body;
+//   try {
+//     const eventCategory = await EventCategory.create({
+//       name,
+//       total_cost: total_cost || 0,
+//       paid_amount: paid_amount || 0,
+//       remaining_balance: remaining_balance || 0,
+//     });
+//     res.status(201).json(eventCategory);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+
 exports.createEventCategory = async (req, res) => {
   const { name, total_cost, paid_amount, remaining_balance } = req.body;
+  const userId = req.user?.id;
+  
+  // Проверяем наличие userId
+  if (!userId) {
+    return res.status(401).json({ 
+      success: false, 
+      error: 'User authentication required' 
+    });
+  }
+  
   try {
     const eventCategory = await EventCategory.create({
       name,
+      host_id: userId,
       total_cost: total_cost || 0,
       paid_amount: paid_amount || 0,
       remaining_balance: remaining_balance || 0,
     });
-    res.status(201).json(eventCategory);
+    res.status(201).json({ 
+      success: true, 
+      data: eventCategory 
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error creating event category:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
   }
 };
+
+
 
 exports.getAllEventCategories = async (req, res) => {
   console.log('GetAllEventCategories started!');
