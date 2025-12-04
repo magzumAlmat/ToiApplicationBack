@@ -242,7 +242,7 @@ exports.getAllServices = async (req, res) => {
 
 
 exports.createEventCategory = async (req, res) => {
-  const { name, total_cost, paid_amount, remaining_balance, budget } = req.body;
+  const { name, total_cost, paid_amount, remaining_balance, budget, service_ids } = req.body;
   const userId = req.user?.id;
   
   // Проверяем наличие userId
@@ -262,10 +262,41 @@ exports.createEventCategory = async (req, res) => {
       remaining_balance: remaining_balance || 0,
       budget: budget !== undefined ? budget : null,
     });
-    res.status(201).json({ 
-      success: true, 
-      data: eventCategory 
+
+    // Если переданы услуги, добавляем их
+    if (Array.isArray(service_ids) && service_ids.length > 0) {
+      const services = await Promise.all(
+        service_ids.map(async ({ serviceId, serviceType }) => {
+          if (!serviceModels[serviceType]) {
+            throw new Error(`Неизвестный тип услуги: ${serviceType}`);
+          }
+          const ServiceModel = serviceModels[serviceType];
+          const service = await ServiceModel.findByPk(serviceId);
+          if (!service) {
+            throw new Error(`Услуга не найдена: ${serviceId}`);
+          }
+          return { serviceId, serviceType };
+        })
+      );
+
+      await EventService.bulkCreate(
+        services.map(({ serviceId, serviceType }) => ({
+          eventCategoryId: eventCategory.id,
+          serviceId,
+          serviceType,
+        }))
+      );
+    }
+
+    // Fetch the created category with services to return complete data
+    const createdCategoryWithServices = await EventCategory.findByPk(eventCategory.id, {
+      include: [{
+        model: EventService,
+        attributes: ['serviceId', 'serviceType']
+      }]
     });
+
+    res.status(201).json(createdCategoryWithServices);
   } catch (error) {
     console.error('Error creating event category:', error);
     res.status(500).json({ 
