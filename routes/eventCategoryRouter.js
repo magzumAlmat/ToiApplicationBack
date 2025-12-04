@@ -12,7 +12,12 @@ const {
     removeServiceFromCategory,
     updateTotalCost,
     updatePaidAmount,
-    updateRemainingBalance
+    updateRemainingBalance,
+    getEventCategoryBudget,
+    getEventCategoryTotalCost,
+    getEventCategoryPaidAmount,
+    getEventCategoryRemainingBalance,
+    updateBudget
 } = require('../controllers/EventCategoryController');
 
 
@@ -57,6 +62,13 @@ router.delete('/event-category/:categoryId/service/:serviceId', removeServiceFro
 router.patch('/event-category/:id/total_cost', updateTotalCost);
 router.patch('/event-category/:id/paid_amount', updatePaidAmount);
 router.patch('/event-category/:id/remaining_balance', updateRemainingBalance);
+router.patch('/event-category/:id/budget', updateBudget);
+
+// Routes for getting individual financial fields
+router.get('/event-category/:id/budget', getEventCategoryBudget);
+router.get('/event-category/:id/total_cost', getEventCategoryTotalCost);
+router.get('/event-category/:id/paid_amount', getEventCategoryPaidAmount);
+router.get('/event-category/:id/remaining_balance', getEventCategoryRemainingBalance);
 
 
 module.exports = router;

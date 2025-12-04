@@ -3,7 +3,7 @@ const WeddingItem = require('../models/WeddingItem');
 
 // Создание новой свадьбы (Create)
 const createWedding = async (req, res) => {
-  const { name, date, items, total_cost, paid_amount, remaining_balance } = req.body;
+  const { name, date, items, total_cost, paid_amount, remaining_balance, budget } = req.body;
   const host_id = req.user?.id;
 
   try {
@@ -25,6 +25,7 @@ const createWedding = async (req, res) => {
           total_cost: total_cost || 0,
           paid_amount: paid_amount || 0,
           remaining_balance: remaining_balance || 0,
+          budget: budget !== undefined ? budget : null,
         },
         { transaction }
       );
@@ -72,7 +73,7 @@ const createWedding = async (req, res) => {
 // Обновление свадьбы (Update)
 const updateWedding = async (req, res) => {
   const { id } = req.params;
-  const { name, date, items, total_cost, paid_amount, remaining_balance } = req.body;
+  const { name, date, items, total_cost, paid_amount, remaining_balance, budget } = req.body;
 
   try {
     const wedding = await Wedding.findByPk(id);
@@ -84,18 +85,21 @@ const updateWedding = async (req, res) => {
       return res.status(403).json({ success: false, error: 'Доступ запрещён' });
     }
 
+    // Validate budget if provided
+    if (budget !== undefined && budget !== null && budget < 0) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Бюджет должен быть положительным числом' 
+      });
+    }
+
     const transaction = await Wedding.sequelize.transaction();
     try {
       const updateData = { name, date };
-      if (total_cost !== undefined) {
-        updateData.total_cost = total_cost;
-      }
-      if (paid_amount !== undefined) {
-        updateData.paid_amount = paid_amount;
-      }
-      if (remaining_balance !== undefined) {
-        updateData.remaining_balance = remaining_balance;
-      }
+      if (total_cost !== undefined) updateData.total_cost = total_cost;
+      if (paid_amount !== undefined) updateData.paid_amount = paid_amount;
+      if (remaining_balance !== undefined) updateData.remaining_balance = remaining_balance;
+      if (budget !== undefined) updateData.budget = budget;
 
       await wedding.update(updateData, { transaction });
 
@@ -288,6 +292,110 @@ const updateRemainingBalance = async (req, res) => {
   }
 };
 
+// Update budget
+const updateBudget = async (req, res) => {
+  const { id } = req.params;
+  const { budget } = req.body;
+
+  if (budget === undefined) {
+    return res.status(400).json({ success: false, error: 'Поле budget обязательно' });
+  }
+
+  try {
+    const wedding = await Wedding.findByPk(id);
+    if (!wedding) {
+      return res.status(404).json({ success: false, error: 'Свадьба не найдена' });
+    }
+
+    if (wedding.host_id !== req.user?.id) {
+      return res.status(403).json({ success: false, error: 'Доступ запрещён' });
+    }
+
+    await wedding.update({ budget });
+
+    res.status(200).json({
+      success: true,
+      data: wedding,
+      message: 'Бюджет обновлен',
+    });
+  } catch (error) {
+    console.error('Ошибка при обновлении бюджета:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+// Get remaining_balance
+const getWeddingRemainingBalance = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const wedding = await Wedding.findByPk(id);
+    if (!wedding) {
+      return res.status(404).json({ success: false, error: 'Свадьба не найдена' });
+    }
+    if (wedding.host_id !== req.user?.id) {
+      return res.status(403).json({ success: false, error: 'Доступ запрещён' });
+    }
+    res.status(200).json({ success: true, remaining_balance: wedding.remaining_balance });
+  } catch (error) {
+    console.error('Ошибка при получении оставшегося баланса свадьбы:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+// Get budget
+const getWeddingBudget = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const wedding = await Wedding.findByPk(id);
+    if (!wedding) {
+      return res.status(404).json({ success: false, error: 'Свадьба не найдена' });
+    }
+    if (wedding.host_id !== req.user?.id) {
+      return res.status(403).json({ success: false, error: 'Доступ запрещён' });
+    }
+    res.status(200).json({ success: true, budget: wedding.budget });
+  } catch (error) {
+    console.error('Ошибка при получении бюджета свадьбы:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+// Get total_cost
+const getWeddingTotalCost = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const wedding = await Wedding.findByPk(id);
+    if (!wedding) {
+      return res.status(404).json({ success: false, error: 'Свадьба не найдена' });
+    }
+    if (wedding.host_id !== req.user?.id) {
+      return res.status(403).json({ success: false, error: 'Доступ запрещён' });
+    }
+    res.status(200).json({ success: true, total_cost: wedding.total_cost });
+  } catch (error) {
+    console.error('Ошибка при получении общей стоимости свадьбы:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+// Get paid_amount
+const getWeddingPaidAmount = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const wedding = await Wedding.findByPk(id);
+    if (!wedding) {
+      return res.status(404).json({ success: false, error: 'Свадьба не найдена' });
+    }
+    if (wedding.host_id !== req.user?.id) {
+      return res.status(403).json({ success: false, error: 'Доступ запрещён' });
+    }
+    res.status(200).json({ success: true, paid_amount: wedding.paid_amount });
+  } catch (error) {
+    console.error('Ошибка при получении оплаченной суммы свадьбы:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
 module.exports = {
   createWedding,
   getAllWeddings,
@@ -297,4 +405,9 @@ module.exports = {
   updateTotalCost,
   updatePaidAmount,
   updateRemainingBalance,
+  updateBudget,
+  getWeddingBudget,
+  getWeddingTotalCost,
+  getWeddingPaidAmount,
+  getWeddingRemainingBalance,
 };

@@ -18,6 +18,12 @@ router.delete('/weddings/:id', passport.authenticate('jwt', {session: false}),au
 router.patch('/weddings/:id/total_cost', passport.authenticate('jwt', {session: false}),authenticate, weddingController.updateTotalCost);
 router.patch('/weddings/:id/paid_amount', passport.authenticate('jwt', {session: false}),authenticate, weddingController.updatePaidAmount);
 router.patch('/weddings/:id/remaining_balance', passport.authenticate('jwt', {session: false}),authenticate, weddingController.updateRemainingBalance);
+router.patch('/weddings/:id/budget', passport.authenticate('jwt', {session: false}),authenticate, weddingController.updateBudget);
 
+// Routes for getting individual financial fields
+router.get('/weddings/:id/budget', passport.authenticate('jwt', {session: false}),authenticate, weddingController.getWeddingBudget);
+router.get('/weddings/:id/total_cost', passport.authenticate('jwt', {session: false}),authenticate, weddingController.getWeddingTotalCost);
+router.get('/weddings/:id/paid_amount', passport.authenticate('jwt', {session: false}),authenticate, weddingController.getWeddingPaidAmount);
+router.get('/weddings/:id/remaining_balance', passport.authenticate('jwt', {session: false}),authenticate, weddingController.getWeddingRemainingBalance);
 
 module.exports = router;

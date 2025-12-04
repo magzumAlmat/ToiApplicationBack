@@ -1,7 +1,6 @@
 // models/Wedding.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db')
-const db = require('./index'); // Импорт db из index.js
 
 const Wedding = sequelize.define('Wedding', {
   id: {
@@ -25,6 +24,7 @@ const Wedding = sequelize.define('Wedding', {
       key: 'id',
     },
   },
+
   total_cost: {
     type: DataTypes.DECIMAL(15, 2),
     allowNull: false,
@@ -39,6 +39,17 @@ const Wedding = sequelize.define('Wedding', {
     type: DataTypes.DECIMAL(15, 2),
     allowNull: false,
     defaultValue: 0.00,
+  },
+  budget: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true,
+    defaultValue: null,
+    validate: {
+      min: {
+        args: [0],
+        msg: "Бюджет должен быть положительным числом",
+      },
+    },
   },
   created_at: {
     type: DataTypes.DATE,

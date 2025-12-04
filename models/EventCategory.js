@@ -41,6 +41,17 @@ const EventCategory = sequelize.define("EventCategory", {
     allowNull: false,
     defaultValue: 0.00,
   },
+  budget: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true,
+    defaultValue: null,
+    validate: {
+      min: {
+        args: [0],
+        msg: "Бюджет должен быть положительным числом",
+      },
+    },
+  },
 }, {
   tableName: "event_categories",
   timestamps: true,

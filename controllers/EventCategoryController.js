@@ -159,6 +159,22 @@ exports.updateServicesForCategory = async (req, res) => {
 // };
 
 
+// Маппинг полей с названиями для разных типов услуг
+const serviceNameMapping = {
+  'Restaurant': 'name',
+  'Alcohol': 'alcoholName',
+  'Flowers': 'flowerName',
+  'Hotel': 'name',
+  'Tamada': 'name',
+  'Program': 'teamName',
+  'Transport': 'carName',
+  'Jewelry': 'itemName',
+  'Cakes': 'name',
+  'TraditionalGifts': 'itemName',
+  'TechnicalEquipmentRental': 'companyName',
+  'Typography': 'companyName'
+};
+
 exports.getAllServices = async (req, res) => {
   console.log('GetAllServices started!');
 
@@ -166,8 +182,11 @@ exports.getAllServices = async (req, res) => {
     const services = await Promise.all(
       Object.entries(serviceModels).map(async ([serviceType, Model]) => {
         try {
+          // Определяем поле названия для текущего типа услуги
+          const nameField = serviceNameMapping[serviceType] || 'name';
+          
           // Dynamically check available columns in the model
-          const attributes = ['id', 'name'];
+          const attributes = ['id', [nameField, 'name']]; // Alias the specific name field to 'name'
           if (Model.rawAttributes.description) {
             attributes.push('description');
           }
@@ -180,8 +199,8 @@ exports.getAllServices = async (req, res) => {
           return items.map(item => ({
             id: item.id,
             name: item.name || 'Unnamed', // Fallback for missing name
-
             serviceType,
+            // Include original name field if needed, though aliasing handles it
           }));
         } catch (error) {
           console.error(`Error fetching services for ${serviceType}:`, error.message);
@@ -223,7 +242,7 @@ exports.getAllServices = async (req, res) => {
 
 
 exports.createEventCategory = async (req, res) => {
-  const { name, total_cost, paid_amount, remaining_balance } = req.body;
+  const { name, total_cost, paid_amount, remaining_balance, budget } = req.body;
   const userId = req.user?.id;
   
   // Проверяем наличие userId
@@ -241,6 +260,7 @@ exports.createEventCategory = async (req, res) => {
       total_cost: total_cost || 0,
       paid_amount: paid_amount || 0,
       remaining_balance: remaining_balance || 0,
+      budget: budget !== undefined ? budget : null,
     });
     res.status(201).json({ 
       success: true, 
@@ -424,8 +444,12 @@ exports.getEventCategoryWithServices = async (req, res) => {
             console.warn(`No model found for serviceType: ${es.serviceType}`);
             return null;
           }
+          
+          // Определяем поле названия для текущего типа услуги
+          const nameField = serviceNameMapping[es.serviceType] || 'name';
+          
           const service = await Model.findByPk(es.serviceId, {
-            attributes: ['id', 'name'],
+            attributes: ['id', [nameField, 'name']], // Alias to 'name'
             raw: true,
           });
           return service ? { ...service, serviceType: es.serviceType, serviceId: es.serviceId } : null;
@@ -453,17 +477,27 @@ exports.getEventCategoryWithServices = async (req, res) => {
 
 exports.updateEventCategory = async (req, res) => {
   const { id } = req.params;
-  const { name, total_cost, paid_amount, remaining_balance } = req.body;
+  const { name, total_cost, paid_amount, remaining_balance, budget } = req.body;
   try {
     const eventCategory = await EventCategory.findByPk(id);
     if (!eventCategory) {
       return res.status(404).json({ message: 'Категория мероприятия с указанным ID не найдена' });
     }
+    
+    // Validate budget if provided
+    if (budget !== undefined && budget !== null && budget < 0) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Бюджет должен быть положительным числом' 
+      });
+    }
+    
     const updateData = {};
     if (name !== undefined) updateData.name = name;
     if (total_cost !== undefined) updateData.total_cost = total_cost;
     if (paid_amount !== undefined) updateData.paid_amount = paid_amount;
     if (remaining_balance !== undefined) updateData.remaining_balance = remaining_balance;
+    if (budget !== undefined) updateData.budget = budget;
 
     await eventCategory.update(updateData);
     res.status(200).json({
@@ -643,6 +677,97 @@ exports.updateRemainingBalance = async (req, res) => {
     });
   } catch (error) {
     console.error('Ошибка при обновлении остатка:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+exports.updateBudget = async (req, res) => {
+  const { id } = req.params;
+  const { budget } = req.body;
+
+  if (budget === undefined) {
+    return res.status(400).json({ success: false, error: 'Поле budget обязательно' });
+  }
+
+  try {
+    const eventCategory = await EventCategory.findByPk(id);
+    if (!eventCategory) {
+      return res.status(404).json({ success: false, error: 'Категория мероприятия не найдена' });
+    }
+    
+    if (budget !== null && budget < 0) {
+      return res.status(400).json({ success: false, error: 'Бюджет должен быть положительным числом' });
+    }
+
+    await eventCategory.update({ budget });
+
+    res.status(200).json({
+      success: true,
+      data: eventCategory,
+      message: 'Бюджет обновлен',
+    });
+  } catch (error) {
+    console.error('Ошибка при обновлении бюджета:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+// Get budget
+exports.getEventCategoryBudget = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const eventCategory = await EventCategory.findByPk(id);
+    if (!eventCategory) {
+      return res.status(404).json({ success: false, error: 'Категория мероприятия не найдена' });
+    }
+    res.status(200).json({ success: true, budget: eventCategory.budget });
+  } catch (error) {
+    console.error('Ошибка при получении бюджета категории мероприятия:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+// Get total_cost
+exports.getEventCategoryTotalCost = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const eventCategory = await EventCategory.findByPk(id);
+    if (!eventCategory) {
+      return res.status(404).json({ success: false, error: 'Категория мероприятия не найдена' });
+    }
+    res.status(200).json({ success: true, total_cost: eventCategory.total_cost });
+  } catch (error) {
+    console.error('Ошибка при получении общей стоимости категории мероприятия:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+// Get paid_amount
+exports.getEventCategoryPaidAmount = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const eventCategory = await EventCategory.findByPk(id);
+    if (!eventCategory) {
+      return res.status(404).json({ success: false, error: 'Категория мероприятия не найдена' });
+    }
+    res.status(200).json({ success: true, paid_amount: eventCategory.paid_amount });
+  } catch (error) {
+    console.error('Ошибка при получении оплаченной суммы категории мероприятия:', error);
+    res.status(500).json({ success: false, error: 'Ошибка сервера' });
+  }
+};
+
+// Get remaining_balance
+exports.getEventCategoryRemainingBalance = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const eventCategory = await EventCategory.findByPk(id);
+    if (!eventCategory) {
+      return res.status(404).json({ success: false, error: 'Категория мероприятия не найдена' });
+    }
+    res.status(200).json({ success: true, remaining_balance: eventCategory.remaining_balance });
+  } catch (error) {
+    console.error('Ошибка при получении оставшегося баланса категории мероприятия:', error);
     res.status(500).json({ success: false, error: 'Ошибка сервера' });
   }
 };
